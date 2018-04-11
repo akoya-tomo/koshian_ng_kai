@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <script src="./options.js"></script>
+
+</head>
+
+<body>
+  <p>
+    <input type="checkbox" id="hide_completely">
+    <label for="hide_completely">完全に隠す</label>
+    <br>
+    <input type="checkbox" id="put_hide_button">
+    <label for="put_hide_button">NGでないレスに[隠す]ボタンを付ける</label>
+    <br>
+    <input type="number" id="hide_size" min="1" max>
+    <label for="hide_size">[隠す]ボタンのサイズ</label>
+  </p>
+  <ul style="list-style-type: none">
+      <p>
+        NGワード (正規表現が使えます)<br>
+        <input type="text" id="ng_input">
+        <input type="button" value="追加", id = "ng_submit">
+      </p>
+      <p id="ng_list">
+      </p>
+    </ul>
+
+</body>
+
+</html>

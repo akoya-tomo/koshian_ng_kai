@@ -1,0 +1,35 @@
+{
+    "manifest_version":2,
+
+    "name":"KOSHIAN NG",
+
+    "version":"1.1.1",
+
+    "applications": {
+        "gecko": {
+            "id": "{2bdf237f-461b-459d-b0ed-c49971954951}"
+        }
+    },
+
+
+    "description":"NGワードを表示しないようにします",
+
+    "icons":{
+        "48":"icons/icon-48.png"
+    },
+
+    "content_scripts":[
+        {
+            "matches":["*://*.2chan.net/*/res/*"],
+            "js":["res.js"]
+        }
+    ],
+    
+    "permissions":[
+        "storage"
+    ],
+
+    "options_ui":{
+        "page":"options.html"
+    }
+}
