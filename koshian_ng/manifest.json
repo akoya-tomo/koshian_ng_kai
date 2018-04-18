@@ -1,0 +1,36 @@
+{
+    "manifest_version":2,
+
+    "name":"KOSHIAN NG 改",
+
+    "version":"1.0.0",
+
+    "applications": {
+        "gecko": {
+            "id": "{709CBCCE-3EDF-11E8-817A-C6D28A3A6C14}",
+            "update_url": "https://raw.githubusercontent.com/akoya-tomo/koshian_ng_kai/master/updates.json"
+        }
+    },
+
+
+    "description":"NGワードを表示しないようにします",
+
+    "icons":{
+        "48":"icons/icon-48.png"
+    },
+
+    "content_scripts":[
+        {
+            "matches":["*://*.2chan.net/*/res/*"],
+            "js":["res.js"]
+        }
+    ],
+    
+    "permissions":[
+        "storage"
+    ],
+
+    "options_ui":{
+        "page":"options.html"
+    }
+}
