@@ -142,8 +142,18 @@ function process(beg = 0){
     header_regex_list = header_regex_list.filter(Boolean);  //配列からnullを削除
 
     loop: for(let i = beg; i < end; ++i){
-
         let block = responses[i].getElementsByTagName("blockquote")[0];
+        //既存の[隠す]ボタンがあれば削除
+        let hide_buttons = responses[i].getElementsByClassName("KOSHIAN_HideButton");
+        if (hide_buttons.length) {
+            hide_buttons[0].remove();
+        } else {
+            let ng_switches = responses[i].getElementsByClassName("KOSHIAN_NGSwitch");
+            if (ng_switches.length) {
+                ng_switches[0].remove();
+            }
+        }
+
         //本文
         let block_text = block.textContent;
         for(let body_regex of body_regex_list){
