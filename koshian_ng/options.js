@@ -1,8 +1,13 @@
+const check_box_num = 3;
+
 let g_hide_completely = null;
 let g_ng_input = null;
 let g_ng_submit = null;
 let g_ng_list = null;
 let g_ng_word_list = [];
+let g_check_body = null;
+let g_check_header = null;
+let g_ignore_case = null;
 let g_put_hide_button = true;
 let g_hide_size = 16;
 
@@ -26,22 +31,45 @@ function saveSetting() {
   });
 }
 
-function addItem(text) {
+function addItem(text, check) {
   let item = document.createElement("div");
   let btn = document.createElement("input");
+  let div = [], check_box = [];
 
   btn.type = "button";
   btn.value = "削除";
+  btn.className = "col_btn";
   btn.addEventListener("click", (e) => {
     item.remove();
-    g_ng_word_list = g_ng_word_list.filter((value, indedx, array) => {
-      return value != text;
+    g_ng_word_list = g_ng_word_list.filter((value, index, array) => {
+      return value[0] != text;
     });
     saveSetting();
   })
-
   item.appendChild(btn);
-  item.appendChild(document.createTextNode(text));
+
+  for (let i = 0; i < check_box_num; i++){
+    check_box[i] = document.createElement("input");
+    check_box[i].type = "checkbox";
+    check_box[i].checked = check[i];
+    check_box[i].style.margin = "auto";
+    check_box[i].addEventListener("click", (e) => {
+      for (let j = 0; j < g_ng_word_list.length; ++j) {
+        if (g_ng_word_list[j][0] == text) {
+          g_ng_word_list[j][i+1] = check_box[i].checked;
+          break;
+        }
+      }
+      saveSetting();
+    })
+
+    div[i] = document.createElement("div");
+    div[i].className = "col_check";
+    div[i].appendChild(check_box[i]);
+    item.appendChild(div[i]);
+  }
+
+  item.appendChild(document.createTextNode("　" + text));
   g_ng_list.appendChild(item);
 }
 
@@ -52,7 +80,7 @@ function setCurrentChoice(result) {
   g_ng_word_list = safeGetValue(result.ng_word_list, []);
 
   for (let i = 0; i < g_ng_word_list.length; ++i) {
-    addItem(g_ng_word_list[i]);
+    addItem(g_ng_word_list[i][0], [g_ng_word_list[i][1], g_ng_word_list[i][2], g_ng_word_list[i][3]]);
   }
 }
 
@@ -63,6 +91,12 @@ function onLoad() {
   g_ng_list = document.getElementById("ng_list");
   g_put_hide_button = document.getElementById("put_hide_button");
   g_hide_size = document.getElementById("hide_size");
+  g_check_body = document.getElementById("check_body");
+  g_check_header = document.getElementById("check_header");
+  g_ignore_case = document.getElementById("ignore_case");
+
+  g_check_body.checked = "checked";
+
   g_hide_completely.addEventListener("change", (e) => {
     saveSetting();
   });
@@ -77,8 +111,8 @@ function onLoad() {
 
   g_ng_input.addEventListener("keypress", (e) => {
     if (e.key == "Enter" && g_ng_input.value != "") {
-      addItem(g_ng_input.value);
-      g_ng_word_list.push(g_ng_input.value);
+      addItem(g_ng_input.value, [g_check_body.checked, g_check_header.checked, g_ignore_case.checked]);
+      g_ng_word_list.push([g_ng_input.value, g_check_body.checked, g_check_header.checked, g_ignore_case.checked]);
       g_ng_input.value = "";
       saveSetting();
     }
@@ -86,8 +120,8 @@ function onLoad() {
 
   g_ng_submit.addEventListener("click", (e) => {
     if (g_ng_input.value != "") {
-      addItem(g_ng_input.value);
-      g_ng_word_list.push(g_ng_input.value);
+      addItem(g_ng_input.value, [g_check_body.checked, g_check_header.checked, g_ignore_case.checked]);
+      g_ng_word_list.push([g_ng_input.value, g_check_body.checked, g_check_header.checked, g_ignore_case.checked]);
       g_ng_input.value = "";
       saveSetting();
     }

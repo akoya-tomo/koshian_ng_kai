@@ -129,27 +129,64 @@ function process(beg = 0){
 
     let end = responses.length;
 
-    let regex_list = ng_word_list.map((ng_word, index, array) => {
-        return new RegExp(ng_word);
+    //ng_word[0]: ng_word, ng_word[1]: check_body, ng_word[2]: check_header, ng_word[3]: ignore_case
+    let body_regex_list = ng_word_list.map((ng_word, index, array) => {
+        return ng_word[1] ? new RegExp(ng_word[0], ng_word[3] ? "i" : "") : null;
     });
+    body_regex_list = body_regex_list.filter(Boolean);  //配列からnullを削除
 
-    for(let i = beg; i < end; ++i){
+    let header_regex_list = ng_word_list.map((ng_word, index, array) => {
+        return ng_word[2] ? new RegExp(ng_word[0], ng_word[3] ? "i" : "") : null;
+    });
+    header_regex_list = header_regex_list.filter(Boolean);  //配列からnullを削除
+
+    loop: for(let i = beg; i < end; ++i){
+
         let block = responses[i].getElementsByTagName("blockquote")[0];
-        let hided = false;
-        for(let j = 0; j < regex_list.length; ++j){
-            if(regex_list[j].test(block.textContent)){
-                if(hide_completely){
-                    hideComopletely(block);
-                }else{
-                    hide(block);
-                }
-
-                hided = true;
-                break;
+        //本文
+        let block_text = block.textContent;
+        for(let body_regex of body_regex_list){
+            if(body_regex.test(block_text)){
+                hideBlock(block);
+                continue loop;
             }
         }
 
-        if(!hided && put_hide_button){
+        let bolds = responses[i].getElementsByTagName("b");
+        for(let header_regex of header_regex_list){
+            //題名・Name
+            for (let bold of bolds){
+                if(header_regex.test(bold.textContent)){
+                    hideBlock(block);
+                    continue loop;
+                }
+            }
+
+            //メール欄
+            let mail = responses[i].getElementsByClassName("KOSHIAN_meran");
+            let mail_text = null;
+            if(mail.length){
+                mail_text = mail[0].textContent.slice(1,-1);
+            }else{
+                mail = responses[i].getElementsByTagName("a");
+                if(mail.length && mail[0].href.indexOf("mailto:") === 0){
+                    mail_text = decodeURIComponent(mail[0].href.slice(7));
+                }
+            }
+            if(mail_text && header_regex.test(mail_text)){
+                hideBlock(block);
+                continue loop;
+            }
+
+            //ID・IP
+            let idip = searchIdIp(responses[i]);
+            if(idip && header_regex.test(idip)){
+                hideBlock(block);
+                continue loop;
+            }
+        }
+
+        if(put_hide_button){
             putHideButton(block);
         }
     }
@@ -157,6 +194,32 @@ function process(beg = 0){
     fixFormPosition();
 
     last_process_num = end;
+
+    function hideBlock(block){
+        if(hide_completely){
+            hideComopletely(block);
+        }else{
+            hide(block);
+        }
+    }
+}
+
+function searchIdIp(rtd){
+    for (let node = rtd.firstChild; node; node = node.nextSibling) {
+        let text = null;
+        if (node.tagName == "BLOCKQUOTE") return;
+        if (node.tagName == "A") {
+            text = node.textContent;
+        } else if (node.nodeValue) {
+            text = node.nodeValue;
+        }
+        if (text) {
+            let idip = text.match(/I[DP]:\S{8}/);
+            if (idip) {
+                return idip[0];
+            }
+        }
+    }
 }
 
 function getResponseNum(){
