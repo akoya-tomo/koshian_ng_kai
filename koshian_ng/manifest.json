@@ -1,13 +1,14 @@
 {
     "manifest_version":2,
 
-    "name":"KOSHIAN NG",
+    "name":"KOSHIAN NG 改",
 
-    "version":"1.1.1",
+    "version":"1.0.0",
 
     "applications": {
         "gecko": {
-            "id": "{2bdf237f-461b-459d-b0ed-c49971954951}"
+            "id": "{709CBCCE-3EDF-11E8-817A-C6D28A3A6C14}",
+            "update_url": "https://raw.githubusercontent.com/akoya-tomo/koshian_ng_kai/master/updates.json"
         }
     },
 
