@@ -76,6 +76,7 @@ function hide(block){
     let btn = document.createElement("a");
     btn.className = "KOSHIAN_NGSwitch";
     btn.href="javascript:void(0)";
+    btn.style.fontSize = `${hide_size}px`;
     btn.onclick = switchNG;
 
     let response = block.parentNode;
