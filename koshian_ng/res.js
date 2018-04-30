@@ -4,6 +4,7 @@ let put_hide_button = true;
 let hide_size = 16;
 let have_sod = false;
 let have_del = false;
+let words_changed = false;
 
 function fixFormPosition(){
     let form = document.getElementById("ftbl");
@@ -100,6 +101,27 @@ function hideComopletely(block){
     }
 }
 
+function show(response){
+    let blockquote = response.getElementsByTagName("blockquote")[0];
+    let img = response.getElementsByTagName("img")[0];
+    let a_img = img ? img.parentNode : null;
+
+    if(blockquote.style.display == "none"){
+        // show
+        blockquote.style.display = "block";
+        if(a_img){
+            a_img.style.display = "block";
+        }
+    }
+
+    for(let node = response.parentNode; node != null; node = node.parentNode){
+        if(node.nodeName == "TABLE"){
+            node.style.display = "block";
+            break;
+        }
+    }
+}
+
 function putHideButton(block){
     let btn = document.createElement("a");
     btn.className = "KOSHIAN_HideButton";
@@ -143,6 +165,10 @@ function process(beg = 0){
 
     loop: for(let i = beg; i < end; ++i){
         let block = responses[i].getElementsByTagName("blockquote")[0];
+
+        if (words_changed) {
+            show(responses[i]);
+        }
         //既存の[隠す]ボタンがあれば削除
         let hide_buttons = responses[i].getElementsByClassName("KOSHIAN_HideButton");
         if (hide_buttons.length) {
@@ -233,6 +259,13 @@ function searchIdIp(rtd){
     }
 }
 
+function handleVisibilityChange() {
+    if (!document.hidden && words_changed) {
+        process();
+        words_changed = false;
+    }
+}
+
 function getResponseNum(){
     return document.getElementsByClassName("rtd").length;
 }
@@ -247,6 +280,8 @@ function main(){
         let beg = last_process_num;
         process(last_process_num);
     });
+
+    document.addEventListener("visibilitychange", handleVisibilityChange, false);
 }
 
 function onLoadSetting(result) {
@@ -258,8 +293,37 @@ function onLoadSetting(result) {
     main();
 }
 
+function onSettingChanged(changes, areaName) {
+    if (areaName != "local") {
+        return;
+    }
+
+    let changedItems = Object.keys(changes);
+    for (let item of changedItems) { 
+        if (item == "hide_completely") {
+            hide_completely = safeGetValue(changes.hide_completely.newValue, false);
+        }
+        if (item == "ng_word_list") {
+            ng_word_list = safeGetValue(changes.ng_word_list.newValue, []);
+        }
+        if (item == "put_hide_button") {
+            put_hide_button = safeGetValue(changes.put_hide_button.newValue, true);
+        }
+        if (item == "hide_size") {
+            hide_size = safeGetValue(changes.hide_size.newValue, 16);
+        }
+    }
+
+    words_changed = true;
+    if (!document.hidden) {
+        process();
+        words_changed = false;
+    }
+}
+
 function safeGetValue(value, default_value) {
     return value === undefined ? default_value : value;
 }
 
 browser.storage.local.get().then(onLoadSetting, (err) => {});
+browser.storage.onChanged.addListener(onSettingChanged);
