@@ -39,6 +39,11 @@ function onLoad() {
 
   g_ng_input.addEventListener("keypress", (e) => {
     if (e.key == "Enter" && g_ng_input.value != "") {
+      //登録と重複したワードを削除
+      g_ng_word_list = g_ng_word_list.filter((value, index, array) => {
+        return value[0] != g_ng_input.value;
+      });
+
       g_ng_word_list.push([g_ng_input.value, g_check_body.checked, g_check_header.checked, g_ignore_case.checked]);
       g_ng_input.value = "";
       saveSetting();
@@ -48,6 +53,11 @@ function onLoad() {
 
   g_ng_submit.addEventListener("click", (e) => {
     if (g_ng_input.value != "") {
+      //登録と重複したワードを削除
+      g_ng_word_list = g_ng_word_list.filter((value, index, array) => {
+        return value[0] != g_ng_input.value;
+      });
+
       g_ng_word_list.push([g_ng_input.value, g_check_body.checked, g_check_header.checked, g_ignore_case.checked]);
       g_ng_input.value = "";
       saveSetting();
