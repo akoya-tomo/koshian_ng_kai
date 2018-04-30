@@ -32,5 +32,12 @@
 
     "options_ui":{
         "page":"options.html"
+    },
+
+    "browser_action": {
+        "browser_style": true,
+        "default_icon": "icons/popup_icon-48.png",
+        "default_title": "KOSHIAN NG",
+        "default_popup": "popup.html"
     }
 }

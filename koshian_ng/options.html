@@ -4,8 +4,11 @@
 
 <head>
   <meta charset="utf-8">
-  <script src="./options.js"></script>
+  <script src="options.js"></script>
   <style type="text/css">
+    .title {font-size: 150%}
+    .rule {border: none; border-top: solid 1px;}
+    #ng_input, #ng_submit {margin-bottom: 5px;}
     .col_btn {display: inline-block; min-width: 50px; max-width: 50px; border-right: solid 1px;}
     .col_check {display: inline-block; min-width: 40px; max-width: 40px; border-right: solid 1px; text-align: center;}
     .col_text {display: inline-block;}
@@ -13,6 +16,8 @@
 </head>
 
 <body>
+  <div class="title">設定</div>
+  <hr class="rule">
   <p>
     <input type="checkbox" id="hide_completely">
     <label for="hide_completely">完全に隠す</label>
@@ -26,15 +31,15 @@
   <ul style="list-style-type: none">
       <p>
         NGワード (正規表現が使えます)<br>
+        <input type="text" id="ng_input" placeholder="NGワードを入力" autofocus>
+        <input type="button" value="追加", id = "ng_submit">
+        <br>
         <input type="checkbox" id="check_body">
         <label for="check_body">本文　</label>
         <input type="checkbox" id="check_header">
         <label for="check_header">メール欄など　</label>
         <input type="checkbox" id="ignore_case">
         <label for="ignore_case" >大文字/小文字を区別しない　</label>
-        <br>
-        <input type="text" id="ng_input">
-        <input type="button" value="追加", id = "ng_submit">
       </p>
       <p><div class="col_btn">　</div><div class="col_check">本文</div><div class="col_check">メ欄</div><div class="col_check">大/小</div><div class="col_text">　NGワード</div></p>
       <p id="ng_list">
