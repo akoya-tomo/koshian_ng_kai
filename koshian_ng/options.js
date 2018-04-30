@@ -73,6 +73,13 @@ function addItem(text, check) {
   g_ng_list.appendChild(item);
 }
 
+function refreshNgList() {
+  g_ng_list.textContent = null; //g_ng_listの子要素を全削除
+  for (let i = 0; i < g_ng_word_list.length; ++i) {
+    addItem(g_ng_word_list[i][0], [g_ng_word_list[i][1], g_ng_word_list[i][2], g_ng_word_list[i][3]]);
+  }
+}
+
 function setCurrentChoice(result) {
   g_hide_completely.checked = safeGetValue(result.hide_completely, false);
   g_put_hide_button.checked = safeGetValue(result.put_hide_button, true);
@@ -111,6 +118,13 @@ function onLoad() {
 
   g_ng_input.addEventListener("keypress", (e) => {
     if (e.key == "Enter" && g_ng_input.value != "") {
+      //登録と重複したワードを削除
+      g_ng_word_list = g_ng_word_list.filter((value, index, array) => {
+        return value[0] != g_ng_input.value;
+      });
+      //NGリストの表示を更新
+      refreshNgList();
+
       addItem(g_ng_input.value, [g_check_body.checked, g_check_header.checked, g_ignore_case.checked]);
       g_ng_word_list.push([g_ng_input.value, g_check_body.checked, g_check_header.checked, g_ignore_case.checked]);
       g_ng_input.value = "";
@@ -120,6 +134,13 @@ function onLoad() {
 
   g_ng_submit.addEventListener("click", (e) => {
     if (g_ng_input.value != "") {
+      //登録と重複したワードを削除
+      g_ng_word_list = g_ng_word_list.filter((value, index, array) => {
+        return value[0] != g_ng_input.value;
+      });
+      //NGリストの表示を更新
+      refreshNgList();
+
       addItem(g_ng_input.value, [g_check_body.checked, g_check_header.checked, g_ignore_case.checked]);
       g_ng_word_list.push([g_ng_input.value, g_check_body.checked, g_check_header.checked, g_ignore_case.checked]);
       g_ng_input.value = "";
@@ -130,4 +151,28 @@ function onLoad() {
   browser.storage.local.get().then(setCurrentChoice, onError);
 }
 
+function onSettingChanged(changes, areaName) {
+  if (areaName != "local") {
+    return;
+  }
+
+  let changed_items = Object.keys(changes);
+  for (let item of changed_items) {
+    if (item == "hide_completely") {
+      g_hide_completely.checked = safeGetValue(changes.hide_completely.newValue, false);
+    }
+    if (item == "ng_word_list") {
+      g_ng_word_list = safeGetValue(changes.ng_word_list.newValue, []);
+    }
+    if (item == "put_hide_button") {
+      g_put_hide_button.checked = safeGetValue(changes.put_hide_button.newValue, true); 
+    }
+    if (item == "hide_size") {
+      g_hide_size.value = safeGetValue(changes.hide_size.newValue, 16);
+    }
+  }
+  refreshNgList();
+}
+
 document.addEventListener("DOMContentLoaded", onLoad);
+browser.storage.onChanged.addListener(onSettingChanged);
