@@ -125,7 +125,7 @@ function show(response){
     }
 }
 
-function putHideButton(block){
+function putHideButton(block, hide){
     let btn = document.createElement("a");
     btn.className = "KOSHIAN_HideButton";
     btn.href="javascript:void(0)";
@@ -140,6 +140,10 @@ function putHideButton(block){
         response.insertBefore(btn, response.getElementsByClassName("del")[0].nextSibling);
     }else{
         response.insertBefore(btn, block);
+    }
+
+    if(hide){
+        switchHide({target: btn});
     }
 }
 
@@ -170,13 +174,17 @@ function process(beg = 0){
 
     loop: for(let i = beg; i < end; ++i){
         let block = responses[i].getElementsByTagName("blockquote")[0];
+        let hide = false;
 
         if (words_changed) {
             show(responses[i]);
         }
         //既存の[隠す]ボタンがあれば削除
         let hide_buttons = responses[i].getElementsByClassName("KOSHIAN_HideButton");
-        if (hide_buttons.length) {
+        if (hide_buttons.length){
+            if (hide_buttons[0].textContent == "[見る]") {
+                hide = true;
+            }
             hide_buttons[0].remove();
         } else {
             let ng_switches = responses[i].getElementsByClassName("KOSHIAN_NGSwitch");
@@ -229,7 +237,7 @@ function process(beg = 0){
         }
 
         if(put_hide_button){
-            putHideButton(block);
+            putHideButton(block, hide);
         }
     }
 
