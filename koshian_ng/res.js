@@ -282,6 +282,11 @@ function main(){
     });
 
     document.addEventListener("visibilitychange", handleVisibilityChange, false);
+
+    browser.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
+        let sel = window.getSelection().toString();
+        sendResponse( {selection:sel} );
+    });
 }
 
 function onLoadSetting(result) {

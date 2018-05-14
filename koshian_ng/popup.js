@@ -33,8 +33,6 @@ function onLoad() {
   g_check_header = document.getElementById("check_header");
   g_ignore_case = document.getElementById("ignore_case");
 
-  console.log("res.js selection_text: " + window.getSelection().toString());
-  g_ng_input.value = window.getSelection().toString();
   g_check_body.checked = "checked";
 
   g_ng_input.addEventListener("keypress", (e) => {
@@ -63,6 +61,12 @@ function onLoad() {
       saveSetting();
       alert("NGワードを登録しました");
     }
+  });
+
+  browser.tabs.query({active:true}, function(tab) {
+    browser.tabs.sendMessage(tab[0].id, {}, function(response) {
+      g_ng_input.value = response.selection;
+    });
   });
 
   browser.storage.local.get().then(setCurrentChoice, onError);
