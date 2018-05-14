@@ -5,6 +5,7 @@ let hide_size = 16;
 let have_sod = false;
 let have_del = false;
 let words_changed = false;
+let show_deleted = false;
 
 function fixFormPosition(){
     let form = document.getElementById("ftbl");
@@ -114,9 +115,11 @@ function show(response){
         }
     }
 
-    for(let node = response.parentNode; node != null; node = node.parentNode){
+    for(let node = response.parentNode; node; node = node.parentNode){
         if(node.nodeName == "TABLE"){
-            node.style.display = "block";
+            if(show_deleted || node.className != "deleted"){
+                node.style.display = "table";
+            }
             break;
         }
     }
@@ -162,6 +165,8 @@ function process(beg = 0){
         return ng_word[2] ? new RegExp(ng_word[0], ng_word[3] ? "i" : "") : null;
     });
     header_regex_list = header_regex_list.filter(Boolean);  //配列からnullを削除
+
+    checkDdbut(); //削除レスの表示状態を確認
 
     loop: for(let i = beg; i < end; ++i){
         let block = responses[i].getElementsByTagName("blockquote")[0];
@@ -263,6 +268,15 @@ function handleVisibilityChange() {
     if (!document.hidden && words_changed) {
         process();
         words_changed = false;
+    }
+}
+
+function checkDdbut() {
+    let ddbut = document.getElementById("ddbut");
+    if (ddbut && ddbut.textContent == "隠す") {
+        show_deleted = true;
+    } else {
+        show_deleted = false;
     }
 }
 
