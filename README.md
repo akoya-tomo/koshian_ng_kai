@@ -1,9 +1,9 @@
-## KOSHIAN NG 改
-このFirefoxアドオンはふたば☆ちゃんねるでNGワードを表示しないようにする[Pachira](https://addons.mozilla.org/ja/firefox/user/anonymous-a0bba9187b568f98732d22d51c5955a6/)氏の[KOSHIAN NG](https://addons.mozilla.org/ja/firefox/addon/koshian-ng/)アドオンを改変したものです。  
+## <sub><img src="koshian_ng/icons/icon-48.png"></sub> KOSHIAN NG 改
+このFirefoxアドオンはふたば☆ちゃんねるでNGワードを表示しないようにする[Pachira](https://addons.mozilla.org/ja/firefox/user/anonymous-a0bba9187b568f98732d22d51c5955a6/)氏の[KOSHIAN NG](https://addons.mozilla.org/ja/firefox/addon/koshian-ng/)を改変したものです。  
 メール欄などをNG判定範囲に含める機能をオリジナル版に追加しています。  
 
 ※このアドオンはWebExtensionアドオン対応のFirefox専用となります。  
-※他のこしあんアドオン改変版やUserscriptは[こちら](https://github.com/akoya-tomo/futaba_auto_reloader_K/wiki/)の一覧からどうぞ。  
+※他のKOSHIAN改変版などのふたば支援ツールは[こちら](https://github.com/akoya-tomo/futaba_auto_reloader_K/wiki/)。  
 
 ## 機能
 * オリジナルの機能（KOSHIAN NG）
@@ -22,16 +22,16 @@
     スレを更新しなくても設定の変更やNGワードの登録が直ぐに反映されます。
 
 ## インストール
-[GitHub](https://github.com/akoya-tomo/koshian_ng_kai/releases/download/v1.2.1/koshian_ng_kai-1.2.1-an.fx.xpi)
+**GitHub**  
+[![インストールボタン](images/install_button.png "クリックでアドオンをインストール")](https://github.com/akoya-tomo/koshian_ng_kai/releases/download/v1.2.1/koshian_ng_kai-1.2.1-an.fx.xpi)
 
-※「接続エラーのため、アドオンをダウンロードできませんでした。」と表示されてインストール出来ないときはリンクを右クリックしてxpiファイルをダウンロードし、メニューのツール→アドオン（またはCtrl+Shift+A）で表示されたアドオンマネージャーのページにxpiファイルをドラッグ＆ドロップして下さい。  
+※「接続エラーのため、アドオンをダウンロードできませんでした。」と表示されてインストール出来ないときはインストールボタンを右クリックしてxpiファイルをダウンロードし、メニューのツール→アドオン（またはCtrl+Shift+A）で表示されたアドオンマネージャーのページにxpiファイルをドラッグ＆ドロップして下さい。  
 
 ## 追加機能の補足
 * NGワードを登録した後でも「本文」「メール欄など」「大文字・小文字を区別しない」のチェックは自由に変更できます。「本文」「メ欄」のチェックを外せば、NGワードを登録したまま無効にすることもできます。  
 * NGワードに登録済みと同じワードを登録すると重複せず新しい設定に上書きされます。これを利用して設定画面を開かないでツールバーボタンのポップアップから設定を変更することができます。  
 
 ## 注意事項
-* このアドオンはWebExtensionアドオン対応のFirefox専用です。  
 * 本アドオンを有効にしたときはオリジナル版を無効にするか削除して下さい。  
 * オリジナル版とは別アドオンなので設定は初期値に戻ります。  
   再度設定をお願い致します。  
