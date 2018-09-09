@@ -303,6 +303,11 @@ function main(){
         process(last_process_num);
     });
 
+    document.addEventListener("AkahukuContentAppend", (e) => {
+        let beg = last_process_num;
+        process(last_process_num);
+    });
+
     document.addEventListener("visibilitychange", handleVisibilityChange, false);
 
     browser.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
