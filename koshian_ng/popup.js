@@ -65,7 +65,7 @@ function onLoad() {
 
   browser.tabs.query({active:true}, function(tab) {
     browser.tabs.sendMessage(tab[0].id, {}, function(response) {
-      g_ng_input.value = response.selection;
+      g_ng_input.value = response.selection.replace(/[\\^$.*+?()[\]{}|]/g, "\\$&");
     });
   });
 
