@@ -5,7 +5,7 @@ let hide_size = 16;
 let have_sod = false;
 let have_del = false;
 let words_changed = false;
-let show_deleted = false;
+let show_deleted_res = false;
 
 function fixFormPosition(){
     let form = document.getElementById("ftbl");
@@ -118,7 +118,7 @@ function show(response){
 
     for(let node = response.parentNode; node; node = node.parentNode){
         if(node.nodeName == "TABLE"){
-            if(show_deleted || node.className != "deleted"){
+            if(show_deleted_res || node.className != "deleted"){
                 node.style.display = "table";
             }
             break;
@@ -160,44 +160,57 @@ function process(beg = 0){
 
     let end = responses.length;
 
-    //ng_word[0]: ng_word, ng_word[1]: check_body, ng_word[2]: check_header, ng_word[3]: ignore_case
-    let body_regex_list = ng_word_list.map((ng_word, index, array) => {
+    /**
+     * 本文のNGワードの正規表現の配列
+     * @type {Array.<RegExp>}
+     */
+    let body_regex_list = ng_word_list.map((ng_word) => {
+        // ng_word[1] boolean check_body 本文が対象か
+        // ng_word[0] string ng_input NGワード
+        // ng_word[3] boolean ignore_case 大文字/小文字を区別しないか
         return ng_word[1] ? new RegExp(ng_word[0], ng_word[3] ? "i" : "") : null;
     });
-    body_regex_list = body_regex_list.filter(Boolean);  //配列からnullを削除
+    body_regex_list = body_regex_list.filter(Boolean);  // 配列からnullを削除
 
-    let header_regex_list = ng_word_list.map((ng_word, index, array) => {
+    /**
+     * メール欄などのNGワードの正規表現の配列
+     * @type {Array.<RegExp>}
+     */
+    let header_regex_list = ng_word_list.map((ng_word) => {
+        // ng_word[2] boolean check_header メール欄などが対象か
+        // ng_word[0] string ng_input NGワード
+        // ng_word[3] boolean ignore_case 大文字/小文字を区別しないか
         return ng_word[2] ? new RegExp(ng_word[0], ng_word[3] ? "i" : "") : null;
     });
-    header_regex_list = header_regex_list.filter(Boolean);  //配列からnullを削除
+    header_regex_list = header_regex_list.filter(Boolean);  // 配列からnullを削除
 
-    checkDdbut(); //削除レスの表示状態を確認
+    show_deleted_res = isDeletedResShown(); // 削除レスの表示状態を確認
 
-    loop: for(let i = beg; i < end; ++i){
+    loop: for (let i = beg; i < end; ++i) {
         let block = responses[i].getElementsByTagName("blockquote")[0];
         let hide = false;
 
         if (words_changed) {
             show(responses[i]);
         }
-        //既存の[隠す]ボタンがあれば削除
-        let hide_buttons = responses[i].getElementsByClassName("KOSHIAN_HideButton");
-        if (hide_buttons.length){
-            if (hide_buttons[0].textContent == "[見る]") {
+        // 既存の[隠す]ボタンがあれば削除
+        let hide_button = responses[i].getElementsByClassName("KOSHIAN_HideButton")[0];
+        if (hide_button){
+            if (hide_button.textContent == "[見る]") {
                 hide = true;
             }
-            hide_buttons[0].remove();
+            hide_button.remove();
         } else {
-            let ng_switches = responses[i].getElementsByClassName("KOSHIAN_NGSwitch");
-            if (ng_switches.length) {
-                ng_switches[0].remove();
+            let ng_switch = responses[i].getElementsByClassName("KOSHIAN_NGSwitch")[0];
+            if (ng_switch) {
+                ng_switch.remove();
             }
         }
 
-        //本文
+        // 本文検索
         let block_text = block.textContent;
-        for(let body_regex of body_regex_list){
-            if(body_regex.test(block_text)){
+        for (let body_regex of body_regex_list) {
+            if (body_regex.test(block_text)) {
                 hideBlock(block, body_regex.source);
                 continue loop;
             }
@@ -244,7 +257,7 @@ function process(beg = 0){
             }
         }
 
-        if(put_hide_button){
+        if (put_hide_button) {
             putHideButton(block, hide);
         }
     }
@@ -284,17 +297,17 @@ function handleVisibilityChange() {
     }
 }
 
-function checkDdbut() {
+/**
+ * 削除されたレスが表示されているか
+ * @return {boolean} 削除されたレスが表示されているか
+ */
+function isDeletedResShown() {
     let ddbut = document.getElementById("ddbut");
     if (ddbut && ddbut.textContent == "隠す") {
-        show_deleted = true;
+        return true;
     } else {
-        show_deleted = false;
+        return false;
     }
-}
-
-function getResponseNum(){
-    return document.getElementsByClassName("rtd").length;
 }
 
 function main(){
@@ -303,8 +316,7 @@ function main(){
 
     process();
 
-    document.addEventListener("KOSHIAN_reload", (e) => {
-        let beg = last_process_num;
+    document.addEventListener("KOSHIAN_reload", () => {
         process(last_process_num);
     });
 
