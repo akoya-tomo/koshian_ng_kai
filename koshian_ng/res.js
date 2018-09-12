@@ -263,19 +263,16 @@ function process(beg = 0){
 }
 
 function searchIdIp(rtd){
+    let idip = null;
     for (let node = rtd.firstElementChild.nextSibling; node; node = node.nextSibling) {
-        let text = null;
         if (node.tagName == "BLOCKQUOTE") return;
         if (node.tagName == "A") {
-            text = node.textContent;
+            idip = node.textContent.match(/ID:\S{8}|IP:[^\s]+/);
         } else if (node.nodeValue) {
-            text = node.nodeValue;
+            idip = node.nodeValue.match(/ID:\S{8}|IP:[^\s]+/);
         }
-        if (text) {
-            let idip = text.match(/I[DP]:\S{8}/);
-            if (idip) {
-                return idip[0];
-            }
+        if (idip) {
+            return idip[0];
         }
     }
 }
