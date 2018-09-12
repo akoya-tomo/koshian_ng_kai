@@ -203,35 +203,42 @@ function process(beg = 0){
             }
         }
 
+        // 題名・Name取得
         let bolds = responses[i].getElementsByTagName("b");
-        for(let header_regex of header_regex_list){
-            //題名・Name
-            for (let bold of bolds){
-                if(header_regex.test(bold.textContent)){
+
+        // メール欄取得
+        let mail = responses[i].getElementsByClassName("KOSHIAN_meran")[0];
+        let mail_text = null;
+        if (mail) {
+            mail_text = mail.textContent.slice(1,-1);
+        } else {
+            mail = responses[i].getElementsByTagName("a")[0];
+            if (mail && mail.href.indexOf("mailto:") === 0) {
+                mail_text = decodeURIComponent(mail.href.slice(7));
+            }
+        }
+
+        // ID・IP取得
+        let idip = searchIdIp(responses[i]);
+
+        // ヘッダ部検索
+        for (let header_regex of header_regex_list) {
+            // 題名・Name
+            for (let bold of bolds) {
+                if (header_regex.test(bold.textContent)) {
                     hideBlock(block, header_regex.source);
                     continue loop;
                 }
             }
 
-            //メール欄
-            let mail = responses[i].getElementsByClassName("KOSHIAN_meran");
-            let mail_text = null;
-            if(mail.length){
-                mail_text = mail[0].textContent.slice(1,-1);
-            }else{
-                mail = responses[i].getElementsByTagName("a");
-                if(mail.length && mail[0].href.indexOf("mailto:") === 0){
-                    mail_text = decodeURIComponent(mail[0].href.slice(7));
-                }
-            }
-            if(mail_text && header_regex.test(mail_text)){
+            // メール欄
+            if (mail_text && header_regex.test(mail_text)) {
                 hideBlock(block, header_regex.source);
                 continue loop;
             }
 
-            //ID・IP
-            let idip = searchIdIp(responses[i]);
-            if(idip && header_regex.test(idip)){
+            // ID･IP
+            if (idip && header_regex.test(idip)) {
                 hideBlock(block, header_regex.source);
                 continue loop;
             }
@@ -256,7 +263,7 @@ function process(beg = 0){
 }
 
 function searchIdIp(rtd){
-    for (let node = rtd.firstChild; node; node = node.nextSibling) {
+    for (let node = rtd.firstElementChild.nextSibling; node; node = node.nextSibling) {
         let text = null;
         if (node.tagName == "BLOCKQUOTE") return;
         if (node.tagName == "A") {
