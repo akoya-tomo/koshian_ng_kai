@@ -5,7 +5,7 @@ let hide_size = 16;
 let have_sod = false;
 let have_del = false;
 let words_changed = false;
-let show_deleted = false;
+let show_deleted_res = false;
 
 function fixFormPosition(){
     let form = document.getElementById("ftbl");
@@ -74,12 +74,13 @@ function switchHide(e){
     fixFormPosition();
 }
 
-function hide(block){
+function hide(block, ng_word){
     let btn = document.createElement("a");
     btn.className = "KOSHIAN_NGSwitch";
     btn.href="javascript:void(0)";
     btn.style.fontSize = `${hide_size}px`;
     btn.onclick = switchNG;
+    btn.title = ng_word;
 
     let response = block.parentNode;
     if(have_sod){
@@ -117,7 +118,7 @@ function show(response){
 
     for(let node = response.parentNode; node; node = node.parentNode){
         if(node.nodeName == "TABLE"){
-            if(show_deleted || node.className != "deleted"){
+            if(show_deleted_res || node.className != "deleted"){
                 node.style.display = "table";
             }
             break;
@@ -159,84 +160,104 @@ function process(beg = 0){
 
     let end = responses.length;
 
-    //ng_word[0]: ng_word, ng_word[1]: check_body, ng_word[2]: check_header, ng_word[3]: ignore_case
-    let body_regex_list = ng_word_list.map((ng_word, index, array) => {
+    /**
+     * 本文のNGワードの正規表現の配列
+     * @type {Array.<RegExp>}
+     */
+    let body_regex_list = ng_word_list.map((ng_word) => {
+        // ng_word[1] boolean check_body 本文が対象か
+        // ng_word[0] string ng_input NGワード
+        // ng_word[3] boolean ignore_case 大文字/小文字を区別しないか
         return ng_word[1] ? new RegExp(ng_word[0], ng_word[3] ? "i" : "") : null;
     });
-    body_regex_list = body_regex_list.filter(Boolean);  //配列からnullを削除
+    body_regex_list = body_regex_list.filter(Boolean);  // 配列からnullを削除
 
-    let header_regex_list = ng_word_list.map((ng_word, index, array) => {
+    /**
+     * メール欄などのNGワードの正規表現の配列
+     * @type {Array.<RegExp>}
+     */
+    let header_regex_list = ng_word_list.map((ng_word) => {
+        // ng_word[2] boolean check_header メール欄などが対象か
+        // ng_word[0] string ng_input NGワード
+        // ng_word[3] boolean ignore_case 大文字/小文字を区別しないか
         return ng_word[2] ? new RegExp(ng_word[0], ng_word[3] ? "i" : "") : null;
     });
-    header_regex_list = header_regex_list.filter(Boolean);  //配列からnullを削除
+    header_regex_list = header_regex_list.filter(Boolean);  // 配列からnullを削除
 
-    checkDdbut(); //削除レスの表示状態を確認
+    show_deleted_res = isDeletedResShown(); // 削除レスの表示状態を確認
 
-    loop: for(let i = beg; i < end; ++i){
+    loop: for (let i = beg; i < end; ++i) {
         let block = responses[i].getElementsByTagName("blockquote")[0];
         let hide = false;
 
         if (words_changed) {
             show(responses[i]);
         }
-        //既存の[隠す]ボタンがあれば削除
-        let hide_buttons = responses[i].getElementsByClassName("KOSHIAN_HideButton");
-        if (hide_buttons.length){
-            if (hide_buttons[0].textContent == "[見る]") {
+        // 既存の[隠す]ボタンがあれば削除
+        let hide_button = responses[i].getElementsByClassName("KOSHIAN_HideButton")[0];
+        if (hide_button){
+            if (hide_button.textContent == "[見る]") {
                 hide = true;
             }
-            hide_buttons[0].remove();
+            hide_button.remove();
         } else {
-            let ng_switches = responses[i].getElementsByClassName("KOSHIAN_NGSwitch");
-            if (ng_switches.length) {
-                ng_switches[0].remove();
+            let ng_switch = responses[i].getElementsByClassName("KOSHIAN_NGSwitch")[0];
+            if (ng_switch) {
+                ng_switch.remove();
             }
         }
 
-        //本文
+        // 本文検索
         let block_text = block.textContent;
-        for(let body_regex of body_regex_list){
-            if(body_regex.test(block_text)){
-                hideBlock(block);
+        for (let body_regex of body_regex_list) {
+            if (body_regex.test(block_text)) {
+                hideBlock(block, body_regex.source);
                 continue loop;
             }
         }
 
+        // 題名・Name取得
         let bolds = responses[i].getElementsByTagName("b");
-        for(let header_regex of header_regex_list){
-            //題名・Name
-            for (let bold of bolds){
-                if(header_regex.test(bold.textContent)){
-                    hideBlock(block);
+
+        // メール欄取得
+        let mail = responses[i].getElementsByClassName("KOSHIAN_meran")[0];
+        let mail_text = null;
+        if (mail) {
+            mail_text = mail.textContent.slice(1,-1);
+        } else {
+            mail = responses[i].getElementsByTagName("a")[0];
+            if (mail && mail.href.indexOf("mailto:") === 0) {
+                mail_text = decodeURIComponent(mail.href.slice(7));
+            }
+        }
+
+        // ID・IP取得
+        let idip = searchIdIp(responses[i]);
+
+        // ヘッダ部検索
+        for (let header_regex of header_regex_list) {
+            // 題名・Name
+            for (let bold of bolds) {
+                if (header_regex.test(bold.textContent)) {
+                    hideBlock(block, header_regex.source);
                     continue loop;
                 }
             }
 
-            //メール欄
-            let mail = responses[i].getElementsByClassName("KOSHIAN_meran");
-            let mail_text = null;
-            if(mail.length){
-                mail_text = mail[0].textContent.slice(1,-1);
-            }else{
-                mail = responses[i].getElementsByTagName("a");
-                if(mail.length && mail[0].href.indexOf("mailto:") === 0){
-                    mail_text = decodeURIComponent(mail[0].href.slice(7));
-                }
-            }
-            if(mail_text && header_regex.test(mail_text)){
-                hideBlock(block);
+            // メール欄
+            if (mail_text && header_regex.test(mail_text)) {
+                hideBlock(block, header_regex.source);
                 continue loop;
             }
 
-            //ID・IP
-            let idip = searchIdIp(responses[i]);
-            if(idip && header_regex.test(idip)){
-                hideBlock(block);
+            // ID･IP
+            if (idip && header_regex.test(idip)) {
+                hideBlock(block, header_regex.source);
                 continue loop;
             }
         }
 
-        if(put_hide_button){
+        if (put_hide_button) {
             putHideButton(block, hide);
         }
     }
@@ -245,29 +266,26 @@ function process(beg = 0){
 
     last_process_num = end;
 
-    function hideBlock(block){
+    function hideBlock(block, ng_word){
         if(hide_completely){
             hideComopletely(block);
         }else{
-            hide(block);
+            hide(block, ng_word);
         }
     }
 }
 
 function searchIdIp(rtd){
-    for (let node = rtd.firstChild; node; node = node.nextSibling) {
-        let text = null;
+    let idip = null;
+    for (let node = rtd.firstElementChild.nextSibling; node; node = node.nextSibling) {
         if (node.tagName == "BLOCKQUOTE") return;
         if (node.tagName == "A") {
-            text = node.textContent;
+            idip = node.textContent.match(/ID:\S{8}|IP:[^\s]+/);
         } else if (node.nodeValue) {
-            text = node.nodeValue;
+            idip = node.nodeValue.match(/ID:\S{8}|IP:[^\s]+/);
         }
-        if (text) {
-            let idip = text.match(/I[DP]:\S{8}/);
-            if (idip) {
-                return idip[0];
-            }
+        if (idip) {
+            return idip[0];
         }
     }
 }
@@ -279,17 +297,17 @@ function handleVisibilityChange() {
     }
 }
 
-function checkDdbut() {
+/**
+ * 削除されたレスが表示されているか
+ * @return {boolean} 削除されたレスが表示されているか
+ */
+function isDeletedResShown() {
     let ddbut = document.getElementById("ddbut");
     if (ddbut && ddbut.textContent == "隠す") {
-        show_deleted = true;
+        return true;
     } else {
-        show_deleted = false;
+        return false;
     }
-}
-
-function getResponseNum(){
-    return document.getElementsByClassName("rtd").length;
 }
 
 function main(){
@@ -298,15 +316,20 @@ function main(){
 
     process();
 
-    document.addEventListener("KOSHIAN_reload", (e) => {
-        let beg = last_process_num;
+    document.addEventListener("KOSHIAN_reload", () => {
         process(last_process_num);
     });
 
-    document.addEventListener("AkahukuContentAppend", (e) => {
-        let beg = last_process_num;
-        process(last_process_num);
-    });
+    let status = "";
+    let target = document.getElementById("akahuku_reload_status");
+    if (target) {
+        checkAkahukuReload();
+    } else {
+        document.addEventListener("AkahukuContentApplied", () => {
+            target = document.getElementById("akahuku_reload_status");
+            if (target) checkAkahukuReload();
+        });
+    }
 
     document.addEventListener("visibilitychange", handleVisibilityChange, false);
 
@@ -314,6 +337,20 @@ function main(){
         let sel = window.getSelection().toString();
         sendResponse( {selection:sel} );
     });
+
+    function checkAkahukuReload() {
+        let config = { childList: true };
+        let observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (target.textContent == status) return;
+                status = target.textContent;
+                if (status.indexOf("新着:") === 0) {
+                    process(last_process_num);
+                }
+            });
+        });
+        observer.observe(target, config);
+    }
 }
 
 function onLoadSetting(result) {
