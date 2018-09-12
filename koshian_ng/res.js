@@ -74,12 +74,13 @@ function switchHide(e){
     fixFormPosition();
 }
 
-function hide(block){
+function hide(block, ng_word){
     let btn = document.createElement("a");
     btn.className = "KOSHIAN_NGSwitch";
     btn.href="javascript:void(0)";
     btn.style.fontSize = `${hide_size}px`;
     btn.onclick = switchNG;
+    btn.title = ng_word;
 
     let response = block.parentNode;
     if(have_sod){
@@ -197,7 +198,7 @@ function process(beg = 0){
         let block_text = block.textContent;
         for(let body_regex of body_regex_list){
             if(body_regex.test(block_text)){
-                hideBlock(block);
+                hideBlock(block, body_regex.source);
                 continue loop;
             }
         }
@@ -207,7 +208,7 @@ function process(beg = 0){
             //題名・Name
             for (let bold of bolds){
                 if(header_regex.test(bold.textContent)){
-                    hideBlock(block);
+                    hideBlock(block, header_regex.source);
                     continue loop;
                 }
             }
@@ -224,14 +225,14 @@ function process(beg = 0){
                 }
             }
             if(mail_text && header_regex.test(mail_text)){
-                hideBlock(block);
+                hideBlock(block, header_regex.source);
                 continue loop;
             }
 
             //ID・IP
             let idip = searchIdIp(responses[i]);
             if(idip && header_regex.test(idip)){
-                hideBlock(block);
+                hideBlock(block, header_regex.source);
                 continue loop;
             }
         }
@@ -245,11 +246,11 @@ function process(beg = 0){
 
     last_process_num = end;
 
-    function hideBlock(block){
+    function hideBlock(block, ng_word){
         if(hide_completely){
             hideComopletely(block);
         }else{
-            hide(block);
+            hide(block, ng_word);
         }
     }
 }
