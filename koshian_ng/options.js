@@ -8,8 +8,8 @@ let g_ng_word_list = [];
 let g_check_body = null;
 let g_check_header = null;
 let g_ignore_case = null;
-let g_put_hide_button = true;
-let g_hide_size = 16;
+let g_put_hide_button = null;
+let g_hide_size = null;
 
 /* eslint indent: ["warn", 2] */
 

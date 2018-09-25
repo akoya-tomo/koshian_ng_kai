@@ -4,6 +4,7 @@
 
 <head>
   <meta charset="utf-8">
+  <title>KOSHIAN NG</title>
   <script src="options.js"></script>
   <style type="text/css">
     .title {font-size: 150%}
@@ -29,23 +30,22 @@
     <label for="hide_size">[隠す]ボタンのサイズ</label>
   </p>
   <ul style="list-style-type: none">
-      <p>
-        NGワード (正規表現が使えます)<br>
-        <input type="text" id="ng_input" placeholder="NGワードを入力" autofocus>
-        <input type="button" value="追加", id = "ng_submit">
-        <br>
-        <input type="checkbox" id="check_body">
-        <label for="check_body">本文　</label>
-        <input type="checkbox" id="check_header">
-        <label for="check_header">メール欄など　</label>
-        <input type="checkbox" id="ignore_case">
-        <label for="ignore_case" >大文字/小文字を区別しない　</label>
-      </p>
-      <p><div class="col_btn">　</div><div class="col_check">本文</div><div class="col_check">メ欄</div><div class="col_check">大/小</div><div class="col_text">　NGワード</div></p>
-      <p id="ng_list">
-      </p>
-    </ul>
-
+    <p>
+      NGワード (正規表現が使えます)<br>
+      <input type="text" id="ng_input" placeholder="NGワードを入力" autofocus>
+      <input type="button" value="追加", id = "ng_submit">
+      <br>
+      <input type="checkbox" id="check_body">
+      <label for="check_body">本文　</label>
+      <input type="checkbox" id="check_header">
+      <label for="check_header">メール欄など　</label>
+      <input type="checkbox" id="ignore_case">
+      <label for="ignore_case" >大文字/小文字を区別しない　</label>
+    </p>
+    <p><div class="col_btn">　</div><div class="col_check">本文</div><div class="col_check">メ欄</div><div class="col_check">大/小</div><div class="col_text">　NGワード</div></p>
+    <p id="ng_list">
+    </p>
+  </ul>
 </body>
 
 </html>

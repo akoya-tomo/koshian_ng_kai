@@ -1,3 +1,6 @@
+const FUTABA_LIGHTBOX_CLASS = "futaba_lightbox";
+const FUTABA_LIGHTBOX_HIDDEN_CLASS = "futaba_lightbox_hidden";
+
 let hide_completely = false;
 let ng_word_list = [];
 let put_hide_button = true;
@@ -35,6 +38,9 @@ function switchNG(e){
         blockquote.style.display = "block";
         if(a_img){
             a_img.style.display = "block";
+            if (a_img.className == FUTABA_LIGHTBOX_HIDDEN_CLASS) {
+                a_img.className = FUTABA_LIGHTBOX_CLASS;
+            }
         }
         e.target.textContent = `[隠す]`;
     }else{
@@ -42,6 +48,9 @@ function switchNG(e){
         blockquote.style.display = "none";
         if(a_img){
             a_img.style.display = "none";
+            if (a_img.className == FUTABA_LIGHTBOX_CLASS) {
+                a_img.className = FUTABA_LIGHTBOX_HIDDEN_CLASS;
+            }
         }
         e.target.textContent = `[NGワード]`;
     }
@@ -60,6 +69,9 @@ function switchHide(e){
         blockquote.style.display = "block";
         if(a_img){
             a_img.style.display = "block";
+            if (a_img.className == FUTABA_LIGHTBOX_HIDDEN_CLASS) {
+                a_img.className = FUTABA_LIGHTBOX_CLASS;
+            }
         }
         e.target.textContent = `[隠す]`;
     }else{
@@ -67,6 +79,9 @@ function switchHide(e){
         blockquote.style.display = "none";
         if(a_img){
             a_img.style.display = "none";
+            if (a_img.className == FUTABA_LIGHTBOX_CLASS) {
+                a_img.className = FUTABA_LIGHTBOX_HIDDEN_CLASS;
+            }
         }
         e.target.textContent = `[見る]`;
     }
@@ -95,9 +110,18 @@ function hide(block, ng_word){
 }
 
 function hideComopletely(block){
+    let response = block.parentNode;
+    let img = response.getElementsByTagName("img")[0];
+    let a_img = img ? img.parentNode : null;
     for(let node = block.parentNode; node != null; node = node.parentNode){
         if(node.nodeName == "TABLE"){
             node.style.display = "none";
+            if(a_img){
+                a_img.style.display = "none";
+                if (a_img.className == FUTABA_LIGHTBOX_CLASS) {
+                    a_img.className = FUTABA_LIGHTBOX_HIDDEN_CLASS;
+                }
+            }
             break;
         }
     }
@@ -113,13 +137,19 @@ function show(response){
         blockquote.style.display = "block";
         if(a_img){
             a_img.style.display = "block";
+            if (a_img.className == FUTABA_LIGHTBOX_HIDDEN_CLASS) {
+                a_img.className = FUTABA_LIGHTBOX_CLASS;
+            }
         }
     }
 
     for(let node = response.parentNode; node; node = node.parentNode){
         if(node.nodeName == "TABLE"){
             if(show_deleted_res || node.className != "deleted"){
-                node.style.display = "table";
+                node.style.display = "";
+                if (a_img && a_img.className == FUTABA_LIGHTBOX_HIDDEN_CLASS) {
+                    a_img.className = FUTABA_LIGHTBOX_CLASS;
+                }
             }
             break;
         }

@@ -23,7 +23,7 @@
 
 ## インストール
 **GitHub**  
-[![インストールボタン](images/install_button.png "クリックでアドオンをインストール")](https://github.com/akoya-tomo/koshian_ng_kai/releases/download/v1.3.0/koshian_ng_kai-1.3.0-an+fx.xpi)
+[![インストールボタン](images/install_button.png "クリックでアドオンをインストール")](https://github.com/akoya-tomo/koshian_ng_kai/releases/download/v1.3.1/koshian_ng_kai-1.3.1-fx.xpi)
 
 ※「接続エラーのため、アドオンをダウンロードできませんでした。」と表示されてインストール出来ないときはインストールボタンを右クリックしてxpiファイルをダウンロードし、メニューのツール→アドオン（またはCtrl+Shift+A）で表示されたアドオンマネージャーのページにxpiファイルをドラッグ＆ドロップして下さい。  
 
@@ -42,6 +42,8 @@
   - 永続的な登録を必要としないIDやIPの登録を想定しています。  
 
 ## 更新履歴
+* v1.3.1 2018-09-26
+  - NGにしたレスの画像が[futaba lightbox](https://github.com/himuro-majika/futaba_lightbox/)で表示されないように修正
 * v1.3.0 2018-09-12
   - \[NGワード\]ボタンにマウスオーバーすると該当したNGワードをポップアップ表示する機能を追加
   - ツールバーボタンを押したときに選択した文字列に正規表現でエスケープが必要な文字が含まれていたらエスケープを追加するように修正
