@@ -10,6 +10,11 @@ let g_check_header = null;
 let g_ignore_case = null;
 let g_put_hide_button = null;
 let g_hide_size = null;
+let g_file = null;
+let g_import = null;
+let g_alert = null;
+let g_export = null;
+let g_export_a  = null;
 
 /* eslint indent: ["warn", 2] */
 
@@ -119,6 +124,11 @@ function onLoad() {
   g_check_body = document.getElementById("check_body");
   g_check_header = document.getElementById("check_header");
   g_ignore_case = document.getElementById("ignore_case");
+  g_file = document.getElementById("file");
+  g_import = document.getElementById("import");
+  g_alert = document.getElementById("alert");
+  g_export = document.getElementById("export");
+  g_export_a = document.getElementById("export_a");
 
   g_check_body.checked = "checked";
 
@@ -133,6 +143,15 @@ function onLoad() {
   });
 
   g_ng_submit.addEventListener("click", addNgWord);
+
+  let reader = new FileReader();
+  g_file.onchange = (e) => {
+    reader.readAsText(e.target.files[0]);
+  };
+  g_import.addEventListener("click", () =>{
+    importCsv(reader.result);
+  });
+  g_export.addEventListener("click", exportCsv);
 
   browser.storage.local.get().then(setCurrentChoice, onError);
 
@@ -154,6 +173,78 @@ function onLoad() {
     g_ng_input.value = "";
     saveSetting();
   }
+}
+
+/**
+ * NGワードCSVファイルインポート
+ * @param {string} csv NGワードCSVデータ
+ */
+function importCsv(csv) {
+  if (!csv) {
+    g_alert.textContent = "ファイルがありません";
+    return;
+  }
+  let line = csv.split("\n");
+  let arr =[];
+  if (line[0] !== "KOSHIAN_NG_words") {
+    g_alert.textContent = "NGワードファイルではありません";
+    return;
+  }
+  for (let i = 0; i < line.length - 1; i++) {
+    if (!line[i + 1]) continue;
+    arr[i] = line[i + 1].split(",");
+    if (!arr[i][0] || !arr[i][1] || (arr[i][1].toLowerCase() !== "true" && arr[i][1].toLowerCase() !== "false")) {
+      g_alert.textContent = "ファイルのデータが異常です";
+      return;
+    }
+  }
+  g_ng_word_list = [];
+  for (let i = 0; i < arr.length; i++) {
+    g_ng_word_list[i] = [];
+    for (let j = 0; j < check_box_num + 1; j++) {
+      if (j == 0) {
+        g_ng_word_list[i].push(decodeURIComponent(arr[i][j]));
+      } else {
+        g_ng_word_list[i].push(arr[i][j] ? arr[i][j].toLowerCase() === "true" : false);
+      }
+    }
+  }
+  saveSetting();
+  g_alert.textContent = "インポートしました";
+}
+
+/**
+ * NGワードCSVファイルエクスポート
+ */
+function exportCsv() {
+  let csv = "KOSHIAN_NG_words\n";
+  for (let i = 0; i < g_ng_word_list.length; i++) {
+    let ng_word_data = g_ng_word_list[i];
+    for (let j = 0; j < ng_word_data.length; j++) {
+      let str = ng_word_data[j] === null ? "" : ng_word_data[j].toString();
+      if (j > 0) csv += ",";
+      csv += encodeURIComponent(str);
+    }
+    csv += "\n";
+  }
+  g_export_a.href = "data:text/csv," + encodeURIComponent(csv);
+  g_export_a.download = "KOSHIAN_NG_words_" + getDate() + ".csv";
+  g_export_a.click();
+}
+
+/**
+ * 日付取得
+ * @return {string} 現在の日付の文字列 yymmdd_hhmmss
+ */
+function getDate() {
+  let now = new Date();
+  let date = ("" + now.getFullYear()).slice(-2) +
+    ("0" + (now.getMonth() + 1)).slice(-2) +
+    ("0" + now.getDate()).slice(-2) + "_" +
+    ("0" + now.getHours()).slice(-2) +
+    ("0" + now.getMinutes()).slice(-2) +
+    ("0" + now.getSeconds()).slice(-2);
+  return date;
 }
 
 function onSettingChanged(changes, areaName) {
