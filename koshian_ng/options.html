@@ -13,6 +13,7 @@
     .col_btn {display: inline-block; min-width: 50px; max-width: 50px; border-right: solid 1px;}
     .col_check {display: inline-block; min-width: 40px; max-width: 40px; border-right: solid 1px; text-align: center;}
     .col_text {display: inline-block;}
+    #export_a {display: none;}
   </style>
 </head>
 
@@ -46,6 +47,14 @@
     <p id="ng_list">
     </p>
   </ul>
+  <p>
+    <input type="file" id="file" accept=".csv, text/csv">　<input type="button" id="import" value="インポート">
+    <br>
+    <span id="alert"></span>
+    <br>
+    <input type="button" id="export" value="エクスポート">
+    <a id="export_a"></a>
+  </p>
 </body>
 
 </html>
