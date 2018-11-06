@@ -30,7 +30,17 @@
     <input type="number" id="hide_size" min="1" max>
     <label for="hide_size">[隠す]ボタンのサイズ</label>
   </p>
-  <ul style="list-style-type: none">
+  <p>
+    <input type="checkbox" id="use_contextmenu">
+    <label for="use_contextmenu">コンテキストメニューからID・IPをNGワード登録する</label>
+    <br>
+    <input type="checkbox" id="regist_id_temp">
+    <label for="regist_id_temp">IDは一時的に登録する</label>
+    <br>
+    <input type="checkbox" id="regist_ip_temp">
+    <label for="regist_ip_temp">IPは一時的に登録する</label>
+  </p>
+<ul style="list-style-type: none">
     <p>
       NGワード (正規表現が使えます)<br>
       <input type="text" id="ng_input" placeholder="NGワードを入力" autofocus>
@@ -42,8 +52,10 @@
       <label for="check_header">メール欄など　</label>
       <input type="checkbox" id="ignore_case">
       <label for="ignore_case" >大文字/小文字を区別しない　</label>
+      <input type="checkbox" id="temporary_regist">
+      <label for="temporary_regist" >一時的に登録　</label>
     </p>
-    <p><div class="col_btn">　</div><div class="col_check">本文</div><div class="col_check">メ欄</div><div class="col_check">大/小</div><div class="col_text">　NGワード</div></p>
+    <p><div class="col_btn">　</div><div class="col_check">本文</div><div class="col_check">メ欄</div><div class="col_check">大/小</div><div class="col_check">一時</div><div class="col_text">　NGワード</div></p>
     <p id="ng_list">
     </p>
   </ul>

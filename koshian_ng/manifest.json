@@ -3,7 +3,7 @@
 
     "name":"KOSHIAN NG 改",
 
-    "version":"1.4.0",
+    "version":"1.5.0",
 
     "applications": {
         "gecko": {
@@ -29,9 +29,13 @@
             "js":["res.js"]
         }
     ],
-    
+
+    "background": {
+        "scripts": ["bg.js"]
+    },
+
     "permissions":[
-        "storage"
+        "storage", "contextMenus"
     ],
 
     "options_ui":{

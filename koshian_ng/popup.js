@@ -4,6 +4,7 @@ let g_ng_word_list = [];
 let g_check_body = null;
 let g_check_header = null;
 let g_ignore_case = null;
+let g_temporary_regist = null;
 
 function onError(error) {
 }
@@ -18,7 +19,7 @@ function safeGetValue(value, default_value) {
 
 function saveSetting() {
     browser.storage.local.set({
-        ng_word_list: g_ng_word_list,
+        ng_word_list: g_ng_word_list
     });
 }
 
@@ -32,6 +33,7 @@ function onLoad() {
     g_check_body = document.getElementById("check_body");
     g_check_header = document.getElementById("check_header");
     g_ignore_case = document.getElementById("ignore_case");
+    g_temporary_regist = document.getElementById("temporary_regist");
 
     g_check_body.checked = "checked";
 
@@ -42,7 +44,7 @@ function onLoad() {
     g_ng_submit.addEventListener("click", addNgWord);
 
     browser.tabs.query({active: true}, function(tab) {
-        browser.tabs.sendMessage(tab[0].id, {}, function(response) {
+        browser.tabs.sendMessage(tab[0].id, {id:"koshian_ng_popup"}, function(response) {
             g_ng_input.value = response.selection.replace(/[\\^$.*+?()[\]{}|]/g, "\\$&");
         });
     });
@@ -59,7 +61,7 @@ function onLoad() {
             return value[0] != g_ng_input.value;
         });
 
-        g_ng_word_list.push([g_ng_input.value, g_check_body.checked, g_check_header.checked, g_ignore_case.checked]);
+        g_ng_word_list.push([g_ng_input.value, g_check_body.checked, g_check_header.checked, g_ignore_case.checked, g_temporary_regist.checked]);
         g_ng_input.value = "";
         saveSetting();
         alert("NGワードを登録しました");
