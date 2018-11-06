@@ -11,6 +11,9 @@ let g_ignore_case = null;
 let g_temporary_regist = null;
 let g_put_hide_button = null;
 let g_hide_size = null;
+let g_use_contextmenu = null;
+let g_regist_id_temp = null;
+let g_regist_ip_temp = null;
 let g_file = null;
 let g_import = null;
 let g_alert = null;
@@ -35,7 +38,10 @@ function saveSetting() {
     hide_completely: g_hide_completely.checked,
     ng_word_list: g_ng_word_list,
     put_hide_button: g_put_hide_button.checked,
-    hide_size: g_hide_size.value
+    hide_size: g_hide_size.value,
+    use_contextmenu: g_use_contextmenu.checked,
+    regist_id_temp: g_regist_id_temp.checked,
+    regist_ip_temp: g_regist_ip_temp.checked
   });
 }
 
@@ -104,7 +110,13 @@ function setCurrentChoice(result) {
   g_hide_completely.checked = safeGetValue(result.hide_completely, false);
   g_put_hide_button.checked = safeGetValue(result.put_hide_button, true);
   g_hide_size.value = safeGetValue(result.hide_size, 16);
+  g_use_contextmenu.checked = safeGetValue(result.use_contextmenu, false);
+  g_regist_id_temp.checked = safeGetValue(result.regist_id_temp, true);
+  g_regist_ip_temp.checked = safeGetValue(result.regist_ip_temp, true);
   g_ng_word_list = safeGetValue(result.ng_word_list, []);
+
+  g_regist_id_temp.disabled = !g_use_contextmenu.checked;
+  g_regist_ip_temp.disabled = !g_use_contextmenu.checked;
 
   for (let i = 0; i < g_ng_word_list.length; ++i) {
     let check =[];
@@ -122,6 +134,9 @@ function onLoad() {
   g_ng_list = document.getElementById("ng_list");
   g_put_hide_button = document.getElementById("put_hide_button");
   g_hide_size = document.getElementById("hide_size");
+  g_use_contextmenu = document.getElementById("use_contextmenu");
+  g_regist_id_temp = document.getElementById("regist_id_temp");
+  g_regist_ip_temp = document.getElementById("regist_ip_temp");
   g_check_body = document.getElementById("check_body");
   g_check_header = document.getElementById("check_header");
   g_ignore_case = document.getElementById("ignore_case");
@@ -135,10 +150,15 @@ function onLoad() {
   g_check_body.checked = "checked";
 
   g_hide_completely.addEventListener("change", saveSetting);
-
   g_put_hide_button.addEventListener("change", saveSetting);
-  
   g_hide_size.addEventListener("change", saveSetting);
+  g_use_contextmenu.addEventListener("change", () => {
+    g_regist_id_temp.disabled = !g_use_contextmenu.checked;
+    g_regist_ip_temp.disabled = !g_use_contextmenu.checked;
+    saveSetting();
+  });
+  g_regist_id_temp.addEventListener("change", saveSetting);
+  g_regist_ip_temp.addEventListener("change", saveSetting);
 
   g_ng_input.addEventListener("keypress", (e) => {
     if (e.key == "Enter") addNgWord();
@@ -267,6 +287,15 @@ function onSettingChanged(changes, areaName) {
     }
     if (item == "hide_size") {
       g_hide_size.value = safeGetValue(changes.hide_size.newValue, 16);
+    }
+    if (item == "use_contextmenu") {
+      g_use_contextmenu.checked = safeGetValue(changes.use_contextmenu.newValue, false);
+    }
+    if (item == "regist_id_temp") {
+      g_regist_id_temp.checked = safeGetValue(changes.regist_id_temp.newValue, true);
+    }
+    if (item == "regist_ip_temp") {
+      g_regist_ip_temp.checked = safeGetValue(changes.regist_ip_temp.newValue, true);
     }
   }
   refreshNgList();

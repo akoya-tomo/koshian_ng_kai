@@ -44,7 +44,7 @@ function onLoad() {
     g_ng_submit.addEventListener("click", addNgWord);
 
     browser.tabs.query({active: true}, function(tab) {
-        browser.tabs.sendMessage(tab[0].id, {}, function(response) {
+        browser.tabs.sendMessage(tab[0].id, {id:"koshian_ng_popup"}, function(response) {
             g_ng_input.value = response.selection.replace(/[\\^$.*+?()[\]{}|]/g, "\\$&");
         });
     });

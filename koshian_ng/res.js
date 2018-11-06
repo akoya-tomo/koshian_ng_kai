@@ -5,10 +5,14 @@ let hide_completely = false;
 let ng_word_list = [];
 let put_hide_button = true;
 let hide_size = 16;
+let use_contextmenu = false;
+let regist_id_temp = true;
+let regist_ip_temp = true;
 let have_sod = false;
 let have_del = false;
 let words_changed = false;
 let show_deleted_res = false;
+let context_idip = null;
 
 function fixFormPosition(){
     let form = document.getElementById("ftbl");
@@ -310,9 +314,9 @@ function searchIdIp(rtd){
     for (let node = rtd.firstElementChild.nextSibling; node; node = node.nextSibling) {
         if (node.tagName == "BLOCKQUOTE") return;
         if (node.tagName == "A") {
-            idip = node.textContent.match(/ID:\S{8}|IP:[^\s]+/);
+            idip = node.textContent.match(/ID:\S{8}|IP:[^\s[]+/);
         } else if (node.nodeValue) {
-            idip = node.nodeValue.match(/ID:\S{8}|IP:[^\s]+/);
+            idip = node.nodeValue.match(/ID:\S{8}|IP:[^\s[]+/);
         }
         if (idip) {
             return idip[0];
@@ -340,6 +344,59 @@ function isDeletedResShown() {
     }
 }
 
+/**
+ * コンテキストメニューからNG登録
+ * @param {string} text ID・IP文字列
+ */
+function onClickNg(text) {
+    if (!text) return;
+    text = text.replace(/[\\^$.*+?()[\]{}|]/g, "\\$&"); // エスケープが必要な文字にエスケープを追加
+    addNgWord(text);
+}
+
+/**
+ * NGワード登録
+ * @param {RegExp} text 登録するNGワード
+ */
+function addNgWord(text) {
+    if (!text) return;
+    // 登録と重複したワードを削除
+    ng_word_list = ng_word_list.filter((value) => {
+        return value[0] != text;
+    });
+
+    let temp_regist = false;
+    if (text.indexOf("ID:") === 0) {
+        temp_regist = regist_id_temp;
+    } else 
+    if (text.indexOf("IP:") === 0) {
+        temp_regist = regist_ip_temp;
+    }
+    ng_word_list.push([text, false, true, false, temp_regist]);
+    browser.storage.local.set({
+        ng_word_list: ng_word_list
+    });
+    alert("NGワードを登録しました");
+}
+
+/**
+ * ID・IPを取得してコンテキストメニューに反映
+ */
+function getIdIp(e) {
+    context_idip = null;
+    if (!use_contextmenu) return;
+    let rtd = e.target.closest(".rtd");
+    if (rtd) {
+        context_idip = searchIdIp(rtd);
+        if (context_idip) {
+            browser.runtime.sendMessage({
+                id:"koshian_ng_idip",
+                text:context_idip
+            });
+        }
+    }
+}
+
 function main(){
     have_sod = document.getElementsByClassName("sod").length > 0;
     have_del = document.getElementsByClassName("del").length > 0;
@@ -363,10 +420,17 @@ function main(){
 
     document.addEventListener("visibilitychange", handleVisibilityChange, false);
 
-    browser.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
-        let sel = window.getSelection().toString();
-        sendResponse( {selection:sel} );
+    browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+        if (message.id == "koshian_ng_popup") {
+            let sel = window.getSelection().toString();
+            sendResponse( {selection:sel} );
+        }
+        if (message.id == "koshian_ng_context") {
+            onClickNg(context_idip);
+        }
     });
+
+    document.addEventListener("contextmenu", getIdIp, false);
 
     function checkAkahukuReload() {
         let config = { childList: true };
@@ -388,7 +452,10 @@ function onLoadSetting(result) {
     ng_word_list = safeGetValue(result.ng_word_list, []);
     put_hide_button = safeGetValue(result.put_hide_button, true);
     hide_size = safeGetValue(result.hide_size, 16);
-    
+    use_contextmenu = safeGetValue(result.use_contextmenu, false);
+    regist_id_temp = safeGetValue(result.regist_id_temp, true);
+    regist_ip_temp = safeGetValue(result.regist_ip_temp, true);
+
     main();
 }
 
@@ -410,6 +477,15 @@ function onSettingChanged(changes, areaName) {
         }
         if (item == "hide_size") {
             hide_size = safeGetValue(changes.hide_size.newValue, 16);
+        }
+        if (item == "use_contextmenu") {
+            use_contextmenu = safeGetValue(changes.use_contextmenu.newValue, false);
+        }
+        if (item == "regist_id_temp") {
+            regist_id_temp = safeGetValue(changes.regist_id_temp.newValue, true);
+        }
+        if (item == "regist_ip_temp") {
+            regist_ip_temp = safeGetValue(changes.regist_ip_temp.newValue, true);
         }
     }
 
