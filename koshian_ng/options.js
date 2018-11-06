@@ -1,4 +1,4 @@
-const check_box_num = 3;  // NGワードのワード当たりのチェックボックスの数
+const check_box_num = 4;  // NGワードのワード当たりのチェックボックスの数
 
 let g_hide_completely = null;
 let g_ng_input = null;
@@ -8,6 +8,7 @@ let g_ng_word_list = [];
 let g_check_body = null;
 let g_check_header = null;
 let g_ignore_case = null;
+let g_temporary_regist = null;
 let g_put_hide_button = null;
 let g_hide_size = null;
 let g_file = null;
@@ -124,6 +125,7 @@ function onLoad() {
   g_check_body = document.getElementById("check_body");
   g_check_header = document.getElementById("check_header");
   g_ignore_case = document.getElementById("ignore_case");
+  g_temporary_regist = document.getElementById("temporary_regist");
   g_file = document.getElementById("file");
   g_import = document.getElementById("import");
   g_alert = document.getElementById("alert");
@@ -168,8 +170,8 @@ function onLoad() {
     // NGリストの表示を更新
     refreshNgList();
 
-    addItem(g_ng_input.value, [g_check_body.checked, g_check_header.checked, g_ignore_case.checked]);
-    g_ng_word_list.push([g_ng_input.value, g_check_body.checked, g_check_header.checked, g_ignore_case.checked]);
+    addItem(g_ng_input.value, [g_check_body.checked, g_check_header.checked, g_ignore_case.checked, g_temporary_regist.checked]);
+    g_ng_word_list.push([g_ng_input.value, g_check_body.checked, g_check_header.checked, g_ignore_case.checked, g_temporary_regist.checked]);
     g_ng_input.value = "";
     saveSetting();
   }
