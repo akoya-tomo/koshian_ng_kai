@@ -31,7 +31,7 @@
 
 ## インストール
 **GitHub**  
-[![インストールボタン](images/install_button.png "クリックでアドオンをインストール")](https://github.com/akoya-tomo/koshian_ng_kai/releases/download/v1.5.0/koshian_ng_kai-1.5.0-fx.xpi)
+[![インストールボタン](images/install_button.png "クリックでアドオンをインストール")](https://github.com/akoya-tomo/koshian_ng_kai/releases/download/v1.5.1/koshian_ng_kai-1.5.1-fx.xpi)
 
 ※「接続エラーのため、アドオンをダウンロードできませんでした。」と表示されてインストール出来ないときはインストールボタンを右クリックしてxpiファイルをダウンロードし、メニューのツール→アドオン（またはCtrl+Shift+A）で表示されたアドオンマネージャーのページにxpiファイルをドラッグ＆ドロップして下さい。  
 
@@ -48,6 +48,8 @@
   再度設定をお願い致します。  
 
 ## 更新履歴
+* v1.5.1 2018-12-20
+  - アドオンを実行するサイトに[ふたポ](http://futapo.futakuro.com/)の過去ログ\(kako.futakuro.com\)を追加  
 * v1.5.0 2018-11-07
   - 「一時的に登録」機能を追加
   - コンテキストメニューからID・IPをNGワード登録する機能を追加
