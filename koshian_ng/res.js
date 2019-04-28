@@ -36,6 +36,7 @@ function switchNG(e){
     let blockquote = response.getElementsByTagName("blockquote")[0];
     let img = response.getElementsByTagName("img")[0];
     let a_img = img? img.parentNode : null;
+    let akahuku_preview = response.getElementsByClassName("akahuku_preview_container")[0];
 
     if(blockquote.style.display == "none"){
         // show
@@ -46,6 +47,9 @@ function switchNG(e){
                 a_img.className = FUTABA_LIGHTBOX_CLASS;
             }
         }
+        if (akahuku_preview) {
+            akahuku_preview.style.display = "";
+        }
         e.target.textContent = `[隠す]`;
     }else{
         // hide
@@ -55,6 +59,9 @@ function switchNG(e){
             if (a_img.className == FUTABA_LIGHTBOX_CLASS) {
                 a_img.className = FUTABA_LIGHTBOX_HIDDEN_CLASS;
             }
+        }
+        if (akahuku_preview) {
+            akahuku_preview.style.display = "none";
         }
         e.target.textContent = `[NGワード]`;
     }
@@ -67,6 +74,7 @@ function switchHide(e){
     let blockquote = response.getElementsByTagName("blockquote")[0];
     let img = response.getElementsByTagName("img")[0];
     let a_img = img ? img.parentNode : null;
+    let akahuku_preview = response.getElementsByClassName("akahuku_preview_container")[0];
 
     if(blockquote.style.display == "none"){
         // show
@@ -77,6 +85,9 @@ function switchHide(e){
                 a_img.className = FUTABA_LIGHTBOX_CLASS;
             }
         }
+        if (akahuku_preview) {
+            akahuku_preview.style.display = "";
+        }
         e.target.textContent = `[隠す]`;
     }else{
         // hide
@@ -86,6 +97,9 @@ function switchHide(e){
             if (a_img.className == FUTABA_LIGHTBOX_CLASS) {
                 a_img.className = FUTABA_LIGHTBOX_HIDDEN_CLASS;
             }
+        }
+        if (akahuku_preview) {
+            akahuku_preview.style.display = "none";
         }
         e.target.textContent = `[見る]`;
     }
@@ -135,6 +149,7 @@ function show(response){
     let blockquote = response.getElementsByTagName("blockquote")[0];
     let img = response.getElementsByTagName("img")[0];
     let a_img = img ? img.parentNode : null;
+    let akahuku_preview = response.getElementsByClassName("akahuku_preview_container")[0];
 
     if(blockquote.style.display == "none"){
         // show
@@ -144,6 +159,9 @@ function show(response){
             if (a_img.className == FUTABA_LIGHTBOX_HIDDEN_CLASS) {
                 a_img.className = FUTABA_LIGHTBOX_CLASS;
             }
+        }
+        if (akahuku_preview) {
+            akahuku_preview.style.display = "";
         }
     }
 
