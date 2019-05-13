@@ -413,8 +413,8 @@ function getIdIp(e) {
         context_idip = searchIdIp(rtd);
         if (context_idip) {
             browser.runtime.sendMessage({
-                id:"koshian_ng_idip",
-                text:context_idip
+                id: "koshian_ng_idip",
+                text: context_idip
             });
         }
     }

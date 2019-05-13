@@ -8,8 +8,9 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
     if (info.menuItemId === "koshian_ng") {
         let tab_id = tab.id;
         browser.tabs.sendMessage(
-            tab_id,
-            {id:"koshian_ng_context"}
+            tab_id, {
+                id: "koshian_ng_context",
+            }
         );
     }
 });

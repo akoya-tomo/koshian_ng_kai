@@ -131,14 +131,7 @@ function setCurrentChoice(result) {
   g_regist_id_temp.disabled = !g_use_contextmenu.checked;
   g_regist_ip_temp.disabled = !g_use_contextmenu.checked;
 
-  for (let i = 0; i < g_ng_word_list.length; ++i) {
-    let check =[];
-    for (let j = 0; j < check_box_num; j++) {
-      check.push(g_ng_word_list[i][j + 1]);
-    }
-    let board_dir = g_ng_word_list[i][6];
-    addItem(g_ng_word_list[i][0], check, board_dir);
-  }
+  refreshNgList();
 }
 
 function onLoad() {
