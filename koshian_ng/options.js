@@ -64,11 +64,14 @@ function addItem(text, check, board_dir = "") {
   btn.value = "削除";
   btn.className = "col_btn";
   btn.addEventListener("click", (e) => {
-    item.remove();
-    g_ng_word_list = g_ng_word_list.filter((value) => {
-      return value[0] != text || value[6] != board_dir;
-    });
-    saveSetting();
+    let result = window.confirm(`${text}を削除してもよろしいですか？`);
+    if (result) {
+      item.remove();
+      g_ng_word_list = g_ng_word_list.filter((value) => {
+        return value[0] != text || value[6] != board_dir;
+      });
+      saveSetting();
+    }
   });
   item.appendChild(btn);
 
