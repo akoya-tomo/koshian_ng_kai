@@ -13,6 +13,9 @@ let have_del = false;
 let words_changed = false;
 let show_deleted_res = false;
 let context_idip = null;
+let server = document.domain.match(/^[^.]+/);
+let path = location.pathname.match(/[^/]+/);
+let board_dir = server + "_" + path;
 
 function fixFormPosition(){
     let form = document.getElementById("ftbl");
@@ -220,7 +223,8 @@ function process(beg = 0){
         // ng_word[1] boolean check_body 本文が対象か
         // ng_word[0] string ng_input NGワード
         // ng_word[3] boolean ignore_case 大文字/小文字を区別しないか
-        return ng_word[1] ? new RegExp(ng_word[0], ng_word[3] ? "i" : "") : null;
+        // ng_word[6] string ng_board NG対象板
+        return ng_word[1] && (!ng_word[6] || ng_word[6] == board_dir) ? new RegExp(ng_word[0], ng_word[3] ? "i" : "") : null;
     });
     body_regex_list = body_regex_list.filter(Boolean);  // 配列からnullを削除
 
@@ -232,7 +236,8 @@ function process(beg = 0){
         // ng_word[2] boolean check_header メール欄などが対象か
         // ng_word[0] string ng_input NGワード
         // ng_word[3] boolean ignore_case 大文字/小文字を区別しないか
-        return ng_word[2] ? new RegExp(ng_word[0], ng_word[3] ? "i" : "") : null;
+        // ng_word[6] string ng_board NG対象板
+        return ng_word[2] && (!ng_word[6] || ng_word[6] == board_dir) ? new RegExp(ng_word[0], ng_word[3] ? "i" : "") : null;
     });
     header_regex_list = header_regex_list.filter(Boolean);  // 配列からnullを削除
 
@@ -380,7 +385,7 @@ function addNgWord(text) {
     if (!text) return;
     // 登録と重複したワードを削除
     ng_word_list = ng_word_list.filter((value) => {
-        return value[0] != text;
+        return value[0] != text || value[6];
     });
 
     let temp_regist = false;
@@ -390,7 +395,7 @@ function addNgWord(text) {
     if (text.indexOf("IP:") === 0) {
         temp_regist = regist_ip_temp;
     }
-    ng_word_list.push([text, false, true, false, temp_regist]);
+    ng_word_list.push([text, false, true, false, temp_regist, null, ""]);
     browser.storage.local.set({
         ng_word_list: ng_word_list
     });
@@ -445,7 +450,10 @@ function main(){
     browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
         if (message.id == "koshian_ng_popup") {
             let sel = window.getSelection().toString();
-            sendResponse( {selection:sel} );
+            sendResponse({
+                selection: sel,
+                board_dir: board_dir
+            });
         }
         if (message.id == "koshian_ng_context") {
             onClickNg(context_idip);

@@ -42,6 +42,8 @@
         "page":"options.html"
     },
 
+    "web_accessible_resources": ["icons/icon-48.png"],
+
     "browser_action": {
         "browser_style": true,
         "default_icon": "icons/popup_icon-48.png",

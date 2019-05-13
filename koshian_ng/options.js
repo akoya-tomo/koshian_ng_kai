@@ -1,4 +1,7 @@
+/* globals board_list */
+
 const check_box_num = 4;  // NGワードのワード当たりのチェックボックスの数
+const check_box_max_num = 5;  // NGワードのワード当たりの最大チェックボックス数（5で固定）
 
 let g_hide_completely = null;
 let g_ng_input = null;
@@ -9,6 +12,7 @@ let g_check_body = null;
 let g_check_header = null;
 let g_ignore_case = null;
 let g_temporary_regist = null;
+let g_board_list = null;
 let g_put_hide_button = null;
 let g_hide_size = null;
 let g_use_contextmenu = null;
@@ -49,8 +53,9 @@ function saveSetting() {
  * NGワードリストにNGワードを追加
  * @param {string} text 追加するNGワード
  * @param {Array.<boolean>} check 追加するNGワードのチェックボックスの状態
+ * @param {string} board_dir 追加する対象
  */
-function addItem(text, check) {
+function addItem(text, check, board_dir = "") {
   let item = document.createElement("div");
   let btn = document.createElement("input");
   let div = [], check_box = [];
@@ -61,7 +66,7 @@ function addItem(text, check) {
   btn.addEventListener("click", (e) => {
     item.remove();
     g_ng_word_list = g_ng_word_list.filter((value) => {
-      return value[0] != text;
+      return value[0] != text || value[6] != board_dir;
     });
     saveSetting();
   });
@@ -88,6 +93,11 @@ function addItem(text, check) {
     item.appendChild(div[i]);
   }
 
+  let div_select = document.createElement("div");
+  div_select.className = "col_select";
+  div_select.appendChild(document.createTextNode("　" + board_list[board_dir].name));
+  item.appendChild(div_select);
+
   item.appendChild(document.createTextNode("　" + text));
   g_ng_list.appendChild(item);
 }
@@ -102,7 +112,7 @@ function refreshNgList() {
     for (let j = 0; j < check_box_num; j++) {
       check.push(g_ng_word_list[i][j + 1]);
     }
-    addItem(g_ng_word_list[i][0], check);
+    addItem(g_ng_word_list[i][0], check, g_ng_word_list[i][6]);
   }
 }
 
@@ -123,7 +133,8 @@ function setCurrentChoice(result) {
     for (let j = 0; j < check_box_num; j++) {
       check.push(g_ng_word_list[i][j + 1]);
     }
-    addItem(g_ng_word_list[i][0], check);
+    let board_dir = g_ng_word_list[i][6];
+    addItem(g_ng_word_list[i][0], check, board_dir);
   }
 }
 
@@ -141,6 +152,7 @@ function onLoad() {
   g_check_header = document.getElementById("check_header");
   g_ignore_case = document.getElementById("ignore_case");
   g_temporary_regist = document.getElementById("temporary_regist");
+  g_board_list = document.getElementById("board_list");
   g_file = document.getElementById("file");
   g_import = document.getElementById("import");
   g_alert = document.getElementById("alert");
@@ -175,6 +187,14 @@ function onLoad() {
   });
   g_export.addEventListener("click", exportCsv);
 
+  for (let key in board_list) {
+    let opt = document.createElement("option");
+    opt.value = key;
+    opt.text = board_list[key].name;
+    opt.disabled = board_list[key].disabled ? true : false;
+    g_board_list.appendChild(opt);
+  }
+
   browser.storage.local.get().then(setCurrentChoice, onError);
 
   /**
@@ -185,13 +205,13 @@ function onLoad() {
 
     // 登録と重複したワードを削除
     g_ng_word_list = g_ng_word_list.filter((value) => {
-      return value[0] != g_ng_input.value;
+      return value[0] != g_ng_input.value || value[6] != g_board_list.value;
     });
     // NGリストの表示を更新
     refreshNgList();
 
-    addItem(g_ng_input.value, [g_check_body.checked, g_check_header.checked, g_ignore_case.checked, g_temporary_regist.checked]);
-    g_ng_word_list.push([g_ng_input.value, g_check_body.checked, g_check_header.checked, g_ignore_case.checked, g_temporary_regist.checked]);
+    addItem(g_ng_input.value, [g_check_body.checked, g_check_header.checked, g_ignore_case.checked, g_temporary_regist.checked], g_board_list.value);
+    g_ng_word_list.push([g_ng_input.value, g_check_body.checked, g_check_header.checked, g_ignore_case.checked, g_temporary_regist.checked, null, g_board_list.value]);
     g_ng_input.value = "";
     saveSetting();
   }
@@ -230,6 +250,10 @@ function importCsv(csv) {
         g_ng_word_list[i].push(arr[i][j] ? arr[i][j].toLowerCase() === "true" : false);
       }
     }
+    for (let j = check_box_num + 1; j < check_box_max_num + 1; j++) {
+      g_ng_word_list[i].push(null);
+    }
+    g_ng_word_list[i].push(arr[i][6] ? arr[i][6] : "");
   }
   saveSetting();
   g_alert.textContent = "インポートしました";

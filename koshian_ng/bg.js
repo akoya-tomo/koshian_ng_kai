@@ -34,6 +34,12 @@ function onLoadSetting(result) {
     ng_word_list = ng_word_list.filter((value) => {
         return !value[4];
     });
+    // 未定義のNG対象に空文字（全ての板）を定義
+    for (let i = 0; i < ng_word_list.length; ++i) {
+        if (ng_word_list[i][6] == null) {   // undefinedとnullを""に変換
+            ng_word_list[i][6] = "";
+        }
+    }
 
     browser.storage.local.set({
         ng_word_list: ng_word_list
