@@ -3,7 +3,7 @@
 
     "name":"KOSHIAN NG 改",
 
-    "version":"1.6.0",
+    "version":"1.7.0",
 
     "applications": {
         "gecko": {
@@ -39,8 +39,11 @@
     ],
 
     "options_ui":{
-        "page":"options.html"
+        "page":"options.html",
+        "open_in_tab": true
     },
+
+    "web_accessible_resources": ["icons/icon-48.png"],
 
     "browser_action": {
         "browser_style": true,

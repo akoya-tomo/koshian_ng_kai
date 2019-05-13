@@ -5,68 +5,84 @@
 <head>
   <meta charset="utf-8">
   <title>KOSHIAN NG</title>
+  <link rel="icon" type="image/png" href="icons/icon-48.png">
+  <script src="boardlist.js"></script>
   <script src="options.js"></script>
   <style type="text/css">
-    .title {font-size: 150%}
-    .rule {border: none; border-top: solid 1px;}
+    .title {font-size: 150%; background-color: #ededf0; padding: 10px;}
+    .icon {vertical-align: middle;}
+    .main {padding: 10px; border-style: solid ; border-width: 0 5px 5px 5px; border-color: #ededf0;}
+    hr {border: none; border-top: solid 1px #d7d7db; height: 1px; margin: 10px 0;}
     #ng_input, #ng_submit {margin-bottom: 5px;}
-    .col_btn {display: inline-block; min-width: 50px; max-width: 50px; border-right: solid 1px;}
-    .col_check {display: inline-block; min-width: 40px; max-width: 40px; border-right: solid 1px; text-align: center;}
-    .col_text {display: inline-block;}
+    .item_btn {display: inline-block; min-width: 49px; max-width: 49px; border-right: solid 1px;}
+    .col_btn {display: inline-block; min-width: 50px; max-width: 50px;}
+    .item_check, .col_check {display: inline-block; min-width: 50px; max-width: 50px; border-right: solid 1px; text-align: center;}
+    .item_select {display: inline-block; min-width: 120px; max-width: 120px; border-right: solid 1px;}
+    .col_select {display: inline-block; min-width: 120px; max-width: 120px; border-right: solid 1px; font-size: 90%;}
+    .item_text, .col_text {display: inline-block;}
+    #ng_list > div:nth-child(2n) {background-color: #e3e4e6};
     #export_a {display: none;}
   </style>
 </head>
 
 <body>
-  <div class="title">設定</div>
-  <hr class="rule">
-  <p>
-    <input type="checkbox" id="hide_completely">
-    <label for="hide_completely">完全に隠す</label>
-    <br>
-    <input type="checkbox" id="put_hide_button">
-    <label for="put_hide_button">NGでないレスに[隠す]ボタンを付ける</label>
-    <br>
-    <input type="number" id="hide_size" min="1" max>
-    <label for="hide_size">[隠す]ボタンのサイズ</label>
-  </p>
-  <p>
-    <input type="checkbox" id="use_contextmenu">
-    <label for="use_contextmenu">コンテキストメニューからID・IPをNGワード登録する</label>
-    <br>
-    <input type="checkbox" id="regist_id_temp">
-    <label for="regist_id_temp">IDは一時的に登録する</label>
-    <br>
-    <input type="checkbox" id="regist_ip_temp">
-    <label for="regist_ip_temp">IPは一時的に登録する</label>
-  </p>
-<ul style="list-style-type: none">
+  <div class="title"><img class= "icon" src="icons/icon-48.png"> KOSHIAN NG 設定</div>
+  <div class="main">
     <p>
-      NGワード (正規表現が使えます)<br>
-      <input type="text" id="ng_input" placeholder="NGワードを入力" autofocus>
-      <input type="button" value="追加", id = "ng_submit">
+      <input type="checkbox" id="hide_completely">
+      <label for="hide_completely">完全に隠す</label>
       <br>
-      <input type="checkbox" id="check_body">
-      <label for="check_body">本文　</label>
-      <input type="checkbox" id="check_header">
-      <label for="check_header">メール欄など　</label>
-      <input type="checkbox" id="ignore_case">
-      <label for="ignore_case" >大文字/小文字を区別しない　</label>
-      <input type="checkbox" id="temporary_regist">
-      <label for="temporary_regist" >一時的に登録　</label>
+      <input type="checkbox" id="put_hide_button">
+      <label for="put_hide_button">NGでないレスに[隠す]ボタンを付ける</label>
+      <br>
+      <input type="number" id="hide_size" min="1" max>
+      <label for="hide_size">[隠す]ボタンのサイズ</label>
     </p>
-    <p><div class="col_btn">　</div><div class="col_check">本文</div><div class="col_check">メ欄</div><div class="col_check">大/小</div><div class="col_check">一時</div><div class="col_text">　NGワード</div></p>
-    <p id="ng_list">
+    <p>
+      <input type="checkbox" id="use_contextmenu">
+      <label for="use_contextmenu">コンテキストメニューからID・IPをNGワード登録する</label>
+      <br>
+      　<input type="checkbox" id="regist_id_temp">
+      <label for="regist_id_temp">IDは一時的に登録する</label>
+      <br>
+      　<input type="checkbox" id="regist_ip_temp">
+      <label for="regist_ip_temp">IPは一時的に登録する</label>
     </p>
-  </ul>
-  <p>
-    <input type="file" id="file" accept=".csv, text/csv">　<input type="button" id="import" value="インポート">
-    <br>
-    <span id="alert"></span>
-    <br>
-    <input type="button" id="export" value="エクスポート">
-    <a id="export_a"></a>
-  </p>
+    <hr>
+    <ul style="list-style-type: none">
+      <p>
+        NGワード (正規表現が使えます)<br>
+        <input type="text" id="ng_input" placeholder="NGワードを入力" autofocus>
+        <input type="button" value="追加", id = "ng_submit">
+        <br>
+        <input type="checkbox" id="check_body">
+        <label for="check_body">本文　</label>
+        <input type="checkbox" id="check_header">
+        <label for="check_header">メール欄など　</label>
+        <input type="checkbox" id="ignore_case">
+        <label for="ignore_case" >大文字/小文字を区別しない　</label>
+        <input type="checkbox" id="temporary_regist">
+        <label for="temporary_regist" >一時的に登録　</label>
+        <br>
+        NG対象<br>
+        <select id="board_list"></select>
+      </p>
+      <p>
+        <div class="item_btn">　</div><div class="item_check">本文</div><div class="item_check">メ欄</div><div class="item_check">大/小</div><div class="item_check">一時</div><div class="item_select">　NG対象</div><div class="item_text">　NGワード</div>
+      </p>
+      <p id="ng_list">
+      </p>
+    </ul>
+    <hr>
+    <p>
+      <input type="file" id="file" accept=".csv, text/csv">　<input type="button" id="import" value="インポート">
+      <br>
+      <span id="alert"></span>
+      <br>
+      <input type="button" id="export" value="エクスポート">
+      <a id="export_a"></a>
+    </p>
+  </div>
 </body>
 
 </html>

@@ -1,3 +1,5 @@
+/* globals board_list */
+
 let g_ng_input = null;
 let g_ng_submit = null;
 let g_ng_word_list = [];
@@ -5,6 +7,7 @@ let g_check_body = null;
 let g_check_header = null;
 let g_ignore_case = null;
 let g_temporary_regist = null;
+let g_board_list = null;
 
 function onError(error) {
 }
@@ -34,6 +37,7 @@ function onLoad() {
     g_check_header = document.getElementById("check_header");
     g_ignore_case = document.getElementById("ignore_case");
     g_temporary_regist = document.getElementById("temporary_regist");
+    g_board_list = document.getElementById("board_list");
 
     g_check_body.checked = "checked";
 
@@ -45,11 +49,28 @@ function onLoad() {
 
     browser.tabs.query({active: true}, function(tab) {
         browser.tabs.sendMessage(tab[0].id, {id:"koshian_ng_popup"}, function(response) {
-            g_ng_input.value = response.selection.replace(/[\\^$.*+?()[\]{}|]/g, "\\$&");
+            if (response) {
+                g_ng_input.value = response.selection.replace(/[\\^$.*+?()[\]{}|]/g, "\\$&");
+                let board_dir = response.board_dir;
+                if (board_dir) {
+                    let opt = document.createElement("option");
+                    opt.value = board_dir;
+                    opt.text = board_list[board_dir].name;
+                    g_board_list.insertBefore(opt, g_board_list.firstElementChild.nextSibling);
+                }
+            }
         });
     });
 
     browser.storage.local.get().then(setCurrentChoice, onError);
+
+    for (let key in board_list) {
+        let opt = document.createElement("option");
+        opt.value = key;
+        opt.text = board_list[key].name;
+        opt.disabled = board_list[key].disabled ? true : false;
+        g_board_list.appendChild(opt);
+    }
 
     /**
      * NGワード追加
@@ -58,10 +79,10 @@ function onLoad() {
         if (g_ng_input.value === "") return;
         // 登録と重複したワードを削除
         g_ng_word_list = g_ng_word_list.filter((value) => {
-            return value[0] != g_ng_input.value;
+            return value[0] != g_ng_input.value || value[6] != g_board_list.value;
         });
 
-        g_ng_word_list.push([g_ng_input.value, g_check_body.checked, g_check_header.checked, g_ignore_case.checked, g_temporary_regist.checked]);
+        g_ng_word_list.push([g_ng_input.value, g_check_body.checked, g_check_header.checked, g_ignore_case.checked, g_temporary_regist.checked, null, g_board_list.value]);
         g_ng_input.value = "";
         saveSetting();
         alert("NGワードを登録しました");
