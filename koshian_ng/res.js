@@ -529,12 +529,17 @@ function getIdIp(e) {
     let rtd = e.target.closest(".rtd");
     if (rtd) {
         context_idip = searchIdIp(rtd);
-        if (context_idip) {
-            browser.runtime.sendMessage({
-                id: "koshian_ng_idip",
-                text: context_idip
-            });
+    } else {
+        let thre = e.target.closest(".thre");
+        if (thre) {
+            context_idip = searchIdIp(thre);
         }
+    }
+    if (context_idip) {
+        browser.runtime.sendMessage({
+            id: "koshian_ng_idip",
+            text: context_idip
+        });
     }
 }
 
