@@ -8,6 +8,9 @@ let hide_size = 16;
 let use_contextmenu = false;
 let regist_id_temp = true;
 let regist_ip_temp = true;
+let max_threads = 512;
+let hide_res_list = {};
+let have_input = false;
 let have_sod = false;
 let have_del = false;
 let words_changed = false;
@@ -158,6 +161,7 @@ function switchHide(e){
     let img = response.getElementsByTagName("img")[0];
     let a_img = img ? img.parentNode : null;
     let akahuku_preview = response.getElementsByClassName("akahuku_preview_container")[0];
+    let res_number = e.target.name;
 
     if(blockquote.style.display == "none"){
         // show
@@ -172,6 +176,12 @@ function switchHide(e){
             akahuku_preview.style.display = "";
         }
         e.target.textContent = `[隠す]`;
+        if (thread_id && res_number) {
+            hide_res_list[thread_id] = hide_res_list[thread_id].filter(value => value != res_number);
+            browser.storage.local.set({
+                hide_res_list: JSON.stringify(hide_res_list)
+            });
+        }
     }else{
         // hide
         blockquote.style.display = "none";
@@ -185,6 +195,12 @@ function switchHide(e){
             akahuku_preview.style.display = "none";
         }
         e.target.textContent = `[見る]`;
+        if (thread_id && res_number) {
+            hide_res_list[thread_id].push(res_number);
+            browser.storage.local.set({
+                hide_res_list: JSON.stringify(hide_res_list)
+            });
+        }
     }
 
     fixFormPosition();
@@ -261,13 +277,14 @@ function show(response){
     }
 }
 
-function putHideButton(block, hide){
+function putHideButton(block, hide, res_number){
     let btn = document.createElement("a");
     btn.className = "KOSHIAN_HideButton";
     btn.href="javascript:void(0)";
     btn.textContent="[隠す]";
     btn.style.fontSize = `${hide_size}px`;
     btn.onclick = switchHide;
+    btn.name = res_number;
 
     let response = block.parentNode;
     if(have_sod){
@@ -285,7 +302,7 @@ function putHideButton(block, hide){
 
 let last_process_num = 0;
 
-function process(beg = 0){
+function process(beg = 0, start = false){
     let responses = document.getElementsByClassName("rtd");
     let respones_num = responses.length;
 
@@ -304,7 +321,7 @@ function process(beg = 0){
         // ng_word[0] string ng_input NGワード
         // ng_word[3] boolean ignore_case 大文字/小文字を区別しないか
         // ng_word[6] string ng_board NG対象板
-        return ng_word[1] && (!ng_word[6] || ng_word[6] == board_dir) ? new RegExp(ng_word[0], ng_word[3] ? "i" : "") : null;
+        return ng_word[1] && (!ng_word[6] || ng_word[6] == board_id) ? new RegExp(ng_word[0], ng_word[3] ? "i" : "") : null;
     });
     body_regex_list = body_regex_list.filter(Boolean);  // 配列からnullを削除
 
@@ -317,7 +334,7 @@ function process(beg = 0){
         // ng_word[0] string ng_input NGワード
         // ng_word[3] boolean ignore_case 大文字/小文字を区別しないか
         // ng_word[6] string ng_board NG対象板
-        return ng_word[2] && (!ng_word[6] || ng_word[6] == board_dir) ? new RegExp(ng_word[0], ng_word[3] ? "i" : "") : null;
+        return ng_word[2] && (!ng_word[6] || ng_word[6] == board_id) ? new RegExp(ng_word[0], ng_word[3] ? "i" : "") : null;
     });
     header_regex_list = header_regex_list.filter(Boolean);  // 配列からnullを削除
 
@@ -372,30 +389,51 @@ function process(beg = 0){
         let idip = searchIdIp(responses[i]);
 
         // ヘッダ部検索
-        for (let header_regex of header_regex_list) {
+        for (let i = 0, list_num = header_regex_list.length; i < list_num; ++i) {
             // 題名・Name
             for (let bold of bolds) {
-                if (header_regex.test(bold.textContent)) {
-                    hideBlock(block, header_regex.source);
+                if (header_regex_list[i].test(bold.textContent)) {
+                    hideBlock(block, header_regex_list[i].source);
                     continue loop;
                 }
             }
 
             // メール欄
-            if (mail_text && header_regex.test(mail_text)) {
-                hideBlock(block, header_regex.source);
+            if (mail_text && header_regex_list[i].test(mail_text)) {
+                hideBlock(block, header_regex_list[i].source);
                 continue loop;
             }
 
             // ID･IP
-            if (idip && header_regex.test(idip)) {
-                hideBlock(block, header_regex.source);
+            if (idip && header_regex_list[i].test(idip)) {
+                hideBlock(block, header_regex_list[i].source);
                 continue loop;
             }
         }
 
         if (put_hide_button) {
-            putHideButton(block, hide);
+            let res_number = "";
+            if (start && !hide && thread_id) {
+                if (have_input) {
+                    let input = responses[i].getElementsByTagName("INPUT")[0];
+                    if (input && input.value == "delete") {
+                        res_number = input.name;
+                    }
+                }
+                if (!res_number && have_sod) {
+                    let sod = responses[i].getElementsByClassName("sod")[0];
+                    if (sod && sod.id) {
+                        res_number = sod.id.slice(2);
+                    }
+                }
+                if (!res_number) {
+                    res_number = getResponseNumber(responses[i]);
+                }
+                if (res_number) {
+                    hide = hide_res_list[thread_id].some(value => value == res_number);
+                }
+            }
+            putHideButton(block, hide, res_number);
         }
     }
 
@@ -501,10 +539,11 @@ function getIdIp(e) {
 }
 
 function main(){
+    have_input = document.querySelector(".thre > input") ? document.querySelector(".thre > input").value == "delete" : false;
     have_sod = document.getElementsByClassName("sod").length > 0;
     have_del = document.getElementsByClassName("del").length > 0;
 
-    process();
+    process(0, true);
 
     document.addEventListener("KOSHIAN_reload", () => {
         process(last_process_num);
@@ -588,8 +627,18 @@ function onLoadSetting(result) {
     use_contextmenu = safeGetValue(result.use_contextmenu, false);
     regist_id_temp = safeGetValue(result.regist_id_temp, true);
     regist_ip_temp = safeGetValue(result.regist_ip_temp, true);
+    max_threads = safeGetValue(result.max_threads, 512);
+    hide_res_list = JSON.parse(safeGetValue(result.hide_res_list, "{}"));
+
+    let hide_res_list_num = Object.keys(hide_res_list).length;
+    for (let i = 0; i < hide_res_list_num - max_threads; ++i) {
+        delete hide_res_list[Object.keys(hide_res_list)[0]];
+    }
 
     setThreadId();
+    if (thread_id && !hide_res_list[thread_id]) {
+        hide_res_list[thread_id] = [];
+    }
 
     main();
 }
@@ -599,28 +648,23 @@ function onSettingChanged(changes, areaName) {
         return;
     }
 
-    let changedItems = Object.keys(changes);
-    for (let item of changedItems) { 
-        if (item == "hide_completely") {
-            hide_completely = safeGetValue(changes.hide_completely.newValue, false);
-        }
-        if (item == "ng_word_list") {
-            ng_word_list = safeGetValue(changes.ng_word_list.newValue, []);
-        }
-        if (item == "put_hide_button") {
-            put_hide_button = safeGetValue(changes.put_hide_button.newValue, true);
-        }
-        if (item == "hide_size") {
-            hide_size = safeGetValue(changes.hide_size.newValue, 16);
-        }
-        if (item == "use_contextmenu") {
-            use_contextmenu = safeGetValue(changes.use_contextmenu.newValue, false);
-        }
-        if (item == "regist_id_temp") {
-            regist_id_temp = safeGetValue(changes.regist_id_temp.newValue, true);
-        }
-        if (item == "regist_ip_temp") {
-            regist_ip_temp = safeGetValue(changes.regist_ip_temp.newValue, true);
+    if (changes.hide_completely) {
+        hide_completely = safeGetValue(changes.hide_completely.newValue, false);
+        put_hide_button = safeGetValue(changes.put_hide_button.newValue, true);
+        hide_size = safeGetValue(changes.hide_size.newValue, 16);
+        use_contextmenu = safeGetValue(changes.use_contextmenu.newValue, false);
+        regist_id_temp = safeGetValue(changes.regist_id_temp.newValue, true);
+        regist_ip_temp = safeGetValue(changes.regist_ip_temp.newValue, true);
+        max_threads = safeGetValue(changes.max_threads.newValue, 512);
+    }
+    if (changes.ng_word_list) {
+        ng_word_list = safeGetValue(changes.ng_word_list.newValue, []);
+        words_changed = true;
+    }
+    if (changes.hide_res_list) {
+        hide_res_list = JSON.parse(safeGetValue(changes.hide_res_list.newValue, "{}"));
+        if (thread_id && !hide_res_list[thread_id]) {
+            hide_res_list[thread_id] = [];
         }
     }
 

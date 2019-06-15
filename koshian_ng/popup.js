@@ -51,11 +51,11 @@ function onLoad() {
         browser.tabs.sendMessage(tab[0].id, {id:"koshian_ng_popup"}, function(response) {
             if (response) {
                 g_ng_input.value = response.selection.replace(/[\\^$.*+?()[\]{}|]/g, "\\$&");
-                let board_dir = response.board_dir;
-                if (board_dir) {
+                let board_id = response.board_id;
+                if (board_id) {
                     let opt = document.createElement("option");
-                    opt.value = board_dir;
-                    opt.text = board_list[board_dir].name;
+                    opt.value = board_id;
+                    opt.text = board_list[board_id].name;
                     g_board_list.insertBefore(opt, g_board_list.firstElementChild.nextSibling);
                 }
             }
