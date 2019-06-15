@@ -9,7 +9,7 @@ let g_ignore_case = null;
 let g_temporary_regist = null;
 let g_board_list = null;
 
-function onError(error) {
+function onError(error) {   // eslint-disable-line no-unused-vars
 }
 
 function safeGetValue(value, default_value) {
@@ -42,13 +42,15 @@ function onLoad() {
     g_check_body.checked = "checked";
 
     g_ng_input.addEventListener("keypress", (e) => {
-        if (e.key == "Enter") addNgWord();
+        if (e.key == "Enter") {
+            addNgWord();
+        }
     });
 
     g_ng_submit.addEventListener("click", addNgWord);
 
     browser.tabs.query({active: true}, function(tab) {
-        browser.tabs.sendMessage(tab[0].id, {id:"koshian_ng_popup"}, function(response) {
+        browser.tabs.sendMessage(tab[0].id, {id: "koshian_ng_popup"}, function(response) {
             if (response) {
                 g_ng_input.value = response.selection.replace(/[\\^$.*+?()[\]{}|]/g, "\\$&");
                 let board_id = response.board_id;
@@ -76,7 +78,9 @@ function onLoad() {
      * NGワード追加
      */
     function addNgWord() {
-        if (g_ng_input.value === "") return;
+        if (g_ng_input.value === "") {
+            return;
+        }
         // 登録と重複したワードを削除
         g_ng_word_list = g_ng_word_list.filter((value) => {
             return value[0] != g_ng_input.value || value[6] != g_board_list.value;

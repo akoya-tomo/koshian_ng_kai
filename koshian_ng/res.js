@@ -320,7 +320,7 @@ function process(beg = 0, start = false){
         // ng_word[1] boolean check_body 本文が対象か
         // ng_word[0] string ng_input NGワード
         // ng_word[3] boolean ignore_case 大文字/小文字を区別しないか
-        // ng_word[6] string ng_board NG対象板
+        // ng_word[6] string ng_board NG対象板ID
         return ng_word[1] && (!ng_word[6] || ng_word[6] == board_id) ? new RegExp(ng_word[0], ng_word[3] ? "i" : "") : null;
     });
     body_regex_list = body_regex_list.filter(Boolean);  // 配列からnullを削除
@@ -333,7 +333,7 @@ function process(beg = 0, start = false){
         // ng_word[2] boolean check_header メール欄などが対象か
         // ng_word[0] string ng_input NGワード
         // ng_word[3] boolean ignore_case 大文字/小文字を区別しないか
-        // ng_word[6] string ng_board NG対象板
+        // ng_word[6] string ng_board NG対象板ID
         return ng_word[2] && (!ng_word[6] || ng_word[6] == board_id) ? new RegExp(ng_word[0], ng_word[3] ? "i" : "") : null;
     });
     header_regex_list = header_regex_list.filter(Boolean);  // 配列からnullを削除
@@ -363,9 +363,9 @@ function process(beg = 0, start = false){
 
         // 本文検索
         let block_text = block.textContent;
-        for (let body_regex of body_regex_list) {
-            if (body_regex.test(block_text)) {
-                hideBlock(block, body_regex.source);
+        for (let i = 0, list_num = body_regex_list.length; i < list_num; ++i) {
+            if (body_regex_list[i].test(block_text)) {
+                hideBlock(block, body_regex_list[i].source);
                 continue loop;
             }
         }
@@ -450,10 +450,14 @@ function process(beg = 0, start = false){
     }
 }
 
-function searchIdIp(rtd){
+/**
+ * ID・IP検索
+ * @param {HTMLElement} target ID・IPを検索するレスのHTML要素(.rtd or .thre)
+ * @return {string} ID・IP文字列
+ */
+function searchIdIp(target){
     let idip = null;
-    for (let node = rtd.firstElementChild.nextSibling; node; node = node.nextSibling) {
-        if (node.tagName == "BLOCKQUOTE") return;
+    for (let node = target.firstElementChild.nextSibling; node; node = node.nextSibling) {
         if (node.tagName == "A") {
             idip = node.textContent.match(/ID:\S{8}|IP:[^\s[]+/);
         } else if (node.nodeValue) {
@@ -461,12 +465,18 @@ function searchIdIp(rtd){
         }
         if (idip) {
             return idip[0];
+        } else if (node.className == "del") {
+            return;
         }
     }
 }
 
+/**
+ * ページの表示／非表示切り替え検出
+ */
 function handleVisibilityChange() {
     if (!document.hidden && words_changed) {
+        // NGワードが変更された状態でページが表示状態になったらNG処理実行
         process();
         words_changed = false;
     }
@@ -490,7 +500,9 @@ function isDeletedResShown() {
  * @param {string} text ID・IP文字列
  */
 function onClickNg(text) {
-    if (!text) return;
+    if (!text) {
+        return;
+    }
     text = text.replace(/[\\^$.*+?()[\]{}|]/g, "\\$&"); // エスケープが必要な文字にエスケープを追加
     addNgWord(text);
 }
@@ -500,17 +512,19 @@ function onClickNg(text) {
  * @param {RegExp} text 登録するNGワード
  */
 function addNgWord(text) {
-    if (!text) return;
+    if (!text) {
+        return;
+    }
     // 登録と重複したワードを削除
     ng_word_list = ng_word_list.filter((value) => {
         return value[0] != text || value[6];
     });
 
     let temp_regist = false;
-    if (text.indexOf("ID:") === 0) {
+    if (text.match(/^ID:\S{8}$/)) {
         temp_regist = regist_id_temp;
     } else 
-    if (text.indexOf("IP:") === 0) {
+    if (text.match(/^IP:[^\s[]+$/)) {
         temp_regist = regist_ip_temp;
     }
     ng_word_list.push([text, false, true, false, temp_regist, null, ""]);
@@ -525,7 +539,9 @@ function addNgWord(text) {
  */
 function getIdIp(e) {
     context_idip = null;
-    if (!use_contextmenu) return;
+    if (!use_contextmenu) {
+        return;
+    }
     let rtd = e.target.closest(".rtd");
     if (rtd) {
         context_idip = searchIdIp(rtd);
@@ -550,48 +566,31 @@ function main(){
 
     process(0, true);
 
+    // KOSHIAN リロード監視
     document.addEventListener("KOSHIAN_reload", () => {
         process(last_process_num);
     });
 
+    // 赤福 リロード監視
     let target = document.getElementById("akahuku_reload_status");
     if (target) {
         checkAkahukuReload(target);
     } else {
         document.addEventListener("AkahukuContentApplied", () => {
             target = document.getElementById("akahuku_reload_status");
-            if (target) checkAkahukuReload(target);
+            if (target) {
+                checkAkahukuReload(target);
+            }
         });
     }
-
-    let contdisp = document.getElementById("contdisp");
-    if (contdisp) {
-        check2chanReload(contdisp);
-    }
-
-    document.addEventListener("visibilitychange", handleVisibilityChange, false);
-
-    browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-        if (message.id == "koshian_ng_popup") {
-            let sel = window.getSelection().toString();
-            sendResponse({
-                selection: sel,
-                board_dir: board_dir
-            });
-        }
-        if (message.id == "koshian_ng_context") {
-            onClickNg(context_idip);
-        }
-    });
-
-    document.addEventListener("contextmenu", getIdIp, false);
-
     function checkAkahukuReload(target) {
         let status = "";
         let config = { childList: true };
         let observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (target.textContent == status) return;
+            mutations.forEach(function(mutation) {  // eslint-disable-line no-unused-vars
+                if (target.textContent == status) {
+                    return;
+                }
                 status = target.textContent;
                 if (status.indexOf("新着:") === 0) {
                     process(last_process_num);
@@ -601,13 +600,20 @@ function main(){
         observer.observe(target, config);
     }
 
+    // ふたば リロード監視
+    let contdisp = document.getElementById("contdisp");
+    if (contdisp) {
+        check2chanReload(contdisp);
+    }
     function check2chanReload(target) {
         let status = "";
         let reloading = false;
         let config = { childList: true };
         let observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (target.textContent == status) return;
+            mutations.forEach(function(mutation) {  // eslint-disable-line no-unused-vars
+                if (target.textContent == status) {
+                    return;
+                }
                 status = target.textContent;
                 if (status == "・・・") {
                     reloading = true;
@@ -622,6 +628,24 @@ function main(){
         });
         observer.observe(target, config);
     }
+
+    document.addEventListener("visibilitychange", handleVisibilityChange, false);
+
+    browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+        if (message.id == "koshian_ng_popup") {
+            let sel = window.getSelection().toString();
+            sendResponse({
+                selection: sel,
+                board_id: board_id
+            });
+        }
+        if (message.id == "koshian_ng_context") {
+            onClickNg(context_idip);
+            sendResponse();
+        }
+    });
+
+    document.addEventListener("contextmenu", getIdIp, false);
 }
 
 function onLoadSetting(result) {
@@ -673,8 +697,7 @@ function onSettingChanged(changes, areaName) {
         }
     }
 
-    words_changed = true;
-    if (!document.hidden) {
+    if (words_changed && !document.hidden) {
         process();
         words_changed = false;
     }
@@ -684,5 +707,5 @@ function safeGetValue(value, default_value) {
     return value === undefined ? default_value : value;
 }
 
-browser.storage.local.get().then(onLoadSetting, (err) => {});
+browser.storage.local.get().then(onLoadSetting, (err) => {});   // eslint-disable-line no-unused-vars
 browser.storage.onChanged.addListener(onSettingChanged);

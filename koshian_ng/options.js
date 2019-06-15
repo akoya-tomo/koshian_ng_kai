@@ -27,7 +27,7 @@ let g_max_threads = null;
 
 /* eslint indent: ["warn", 2] */
 
-function onError(error) {
+function onError(error) { // eslint-disable-line no-unused-vars
 }
 
 function safeGetValue(value, default_value) {
@@ -55,7 +55,7 @@ function saveSetting() {
  * NGワードリストにNGワードを追加
  * @param {string} text 追加するNGワード
  * @param {Array.<boolean>} check 追加するNGワードのチェックボックスの状態
- * @param {string} board_dir 追加する対象
+ * @param {string} board_id 追加する対象板ID
  */
 function addItem(text, check, board_id = "") {
   let item = document.createElement("div");
@@ -65,7 +65,7 @@ function addItem(text, check, board_id = "") {
   btn.type = "button";
   btn.value = "削除";
   btn.className = "col_btn";
-  btn.addEventListener("click", (e) => {
+  btn.addEventListener("click", (e) => {  // eslint-disable-line no-unused-vars
     let result = window.confirm(`${text}を削除してもよろしいですか？`);
     if (result) {
       item.remove();
@@ -82,7 +82,7 @@ function addItem(text, check, board_id = "") {
     check_box[i].type = "checkbox";
     check_box[i].checked = check[i];
     check_box[i].style.margin = "auto";
-    check_box[i].addEventListener("click", (e) => {
+    check_box[i].addEventListener("click", (e) => { // eslint-disable-line no-unused-vars
       for (let j = 0; j < g_ng_word_list.length; ++j) {
         if (g_ng_word_list[j][0] == text) {
           g_ng_word_list[j][i + 1] = check_box[i].checked;
@@ -173,7 +173,9 @@ function onLoad() {
   g_regist_ip_temp.addEventListener("change", saveSetting);
 
   g_ng_input.addEventListener("keypress", (e) => {
-    if (e.key == "Enter") addNgWord();
+    if (e.key == "Enter"){
+      addNgWord();
+    }
   });
 
   g_ng_submit.addEventListener("click", addNgWord);
@@ -203,8 +205,9 @@ function onLoad() {
    * NGワード追加
    */
   function addNgWord() {
-    if (g_ng_input.value == "") return;
-
+    if (g_ng_input.value == "") {
+      return;
+    }
     // 登録と重複したワードを削除
     g_ng_word_list = g_ng_word_list.filter((value) => {
       return value[0] != g_ng_input.value || value[6] != g_board_list.value;
@@ -234,8 +237,10 @@ function importCsv(csv) {
     g_alert.textContent = "NGワードファイルではありません";
     return;
   }
-  for (let i = 0; i < line.length - 1; i++) {
-    if (!line[i + 1]) continue;
+  for (let i = 0, line_num = line.length - 1; i < line_num; ++i) {
+    if (!line[i + 1]) {
+      continue;
+    }
     arr[i] = line[i + 1].split(",");
     if (!arr[i][0] || !arr[i][1] || (arr[i][1].toLowerCase() !== "true" && arr[i][1].toLowerCase() !== "false")) {
       g_alert.textContent = "ファイルのデータが異常です";
@@ -243,7 +248,7 @@ function importCsv(csv) {
     }
   }
   g_ng_word_list = [];
-  for (let i = 0; i < arr.length; i++) {
+  for (let i = 0, arr_num = arr.length; i < arr_num; ++i) {
     g_ng_word_list[i] = [];
     g_ng_word_list[i].push(decodeURIComponent(arr[i][0]));
     for (let j = 1; j <= CHECK_BOX_NUM; ++j) {
