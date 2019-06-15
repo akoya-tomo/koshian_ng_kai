@@ -13,9 +13,89 @@ let have_del = false;
 let words_changed = false;
 let show_deleted_res = false;
 let context_idip = null;
-let server = document.domain.match(/^[^.]+/);
-let path = location.pathname.match(/[^/]+/);
-let board_dir = server + "_" + path;
+let board_id = "";
+let thread_id = "";
+
+/**
+ * 板ID・スレッドID設定
+ *     {string} board_id 板ID文字列（サーバー名_パス名）
+ *     {string} thread_id スレッドID文字列（サーバー名_パス名_スレッドNo.）
+ */
+function setThreadId() {
+    let match, server, path;
+    switch (document.domain) {
+        case "kako.futakuro.com":
+            // ふたポ過去ログ
+            match = location.href.match(/^https?:\/\/kako.futakuro.com\/futa\/([^/]+)\/(\d+)\//);
+            if (match) {
+                board_id = match[1];
+                thread_id = board_id + "_" + match[2];
+            }
+            break;
+        case "tsumanne.net":
+            // 「」ッチー
+            match = location.href.match(/^https?:\/\/tsumanne.net\/([^/]+)\/data\//);
+            if (match) {
+                switch (match[1]) {
+                    case "my":
+                        board_id = "may_b";
+                        break;
+                    case "si":
+                        board_id = "img_b";
+                        break;
+                    case "sa":
+                        board_id = "dat_b";
+                        break;
+                }
+                if (board_id) {
+                    let thre = document.getElementsByClassName("thre")[0];
+                    let number = getResponseNumber(thre);
+                    if (number) {
+                        thread_id = board_id + "_" + number;
+                    }
+                }
+            }
+            break;
+        case "www.ftbucket.info":
+            // ftbucket
+            match = location.href.match(/^https?:\/\/www.ftbucket.info\/.+\/cont\/([^./]+)\.2chan.net_([^_/]+)_res_(\d+)\/index.htm/);
+            if (match) {
+                board_id = match[1] + "_" + match[2];
+                thread_id = board_id + "_" + match[3];
+            }
+            break;
+        default:
+            // ふたば
+            server = document.domain.match(/^[^.]+/);
+            path = location.pathname.match(/[^/]+/);
+            board_id = server + "_" + path;
+            match = location.pathname.match(/\/(\d+)\.htm/);
+            if (match) {
+                thread_id = board_id + "_" + match[1];
+            }
+    }
+    console.debug("KOSHIAN_ng/res.js - thread_id: " + thread_id);
+}
+
+/**
+ * レス番号取得
+ * @param {HTMLElement} target レス番号を取得するレスのHTML要素(.rtd or .thre)
+ * @return {string} レス番号の数字部分。レス番号が無ければ空文字
+ */
+function getResponseNumber(target) {
+    if (target) {
+        for (let node = target.firstChild; node; node = node.nextSibling) {
+            let node_value = node.nodeValue;
+            if (node_value) {
+                let match = node_value.match(/No.(\d+)/);
+                if (match) {
+                    return match[1];
+                }
+            }
+        }
+    }
+    return "";
+}
 
 function fixFormPosition(){
     let form = document.getElementById("ftbl");
@@ -508,6 +588,8 @@ function onLoadSetting(result) {
     use_contextmenu = safeGetValue(result.use_contextmenu, false);
     regist_id_temp = safeGetValue(result.regist_id_temp, true);
     regist_ip_temp = safeGetValue(result.regist_ip_temp, true);
+
+    setThreadId();
 
     main();
 }
