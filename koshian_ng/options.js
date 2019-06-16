@@ -52,16 +52,15 @@ function saveSetting() {
 }
 
 /**
- * NGワードリストにNGワードを追加
- * @param {string} text 追加するNGワード
- * @param {Array.<boolean>} check 追加するNGワードのチェックボックスの状態
- * @param {string} board_id 追加する対象板ID
+ * NGワードリストの表示欄にNGワードの項目を追加
+ * @param {string} text 表示を追加するNGワード
+ * @param {Array.<boolean>} check 表示を追加するNGワードのチェックボックスの状態
+ * @param {string} board_id 表示を追加するNGワードの対象板ID
  */
 function addItem(text, check, board_id = "") {
   let item = document.createElement("div");
-  let btn = document.createElement("input");
-  let div = [], check_box = [];
 
+  let btn = document.createElement("input");
   btn.type = "button";
   btn.value = "削除";
   btn.className = "col_btn";
@@ -77,11 +76,11 @@ function addItem(text, check, board_id = "") {
   });
   item.appendChild(btn);
 
+  let div_check = [], check_box = [];
   for (let i = 0; i < CHECK_BOX_NUM; i++){
     check_box[i] = document.createElement("input");
     check_box[i].type = "checkbox";
     check_box[i].checked = check[i];
-    check_box[i].style.margin = "auto";
     check_box[i].addEventListener("change", () => {
       let index = g_ng_word_list.findIndex(value => value[0] == text && value[6] == board_id);
       if (index > -1) {
@@ -91,11 +90,10 @@ function addItem(text, check, board_id = "") {
         refreshNgList();
       }
     });
-
-    div[i] = document.createElement("div");
-    div[i].className = "col_check";
-    div[i].appendChild(check_box[i]);
-    item.appendChild(div[i]);
+    div_check[i] = document.createElement("div");
+    div_check[i].className = "col_check";
+    div_check[i].appendChild(check_box[i]);
+    item.appendChild(div_check[i]);
   }
 
   let div_select = document.createElement("div");
@@ -128,7 +126,11 @@ function addItem(text, check, board_id = "") {
   div_select.appendChild(select);
   item.appendChild(div_select);
 
-  item.appendChild(document.createTextNode("　" + text));
+  let div_text = document.createElement("div");
+  div_text.className = "col_text";
+  div_text.textContent = text;
+  item.appendChild(div_text);
+
   g_ng_list.appendChild(item);
 }
 
