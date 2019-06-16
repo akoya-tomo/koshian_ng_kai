@@ -100,7 +100,32 @@ function addItem(text, check, board_id = "") {
 
   let div_select = document.createElement("div");
   div_select.className = "col_select";
-  div_select.appendChild(document.createTextNode("　" + board_list[board_id].name));
+  let select = document.createElement("select");
+  select.name = board_id;
+  for (let key in board_list) {
+    let opt = document.createElement("option");
+    opt.value = key;
+    opt.text = board_list[key].name;
+    opt.disabled = board_list[key].disabled ? true : false;
+    opt.selected = key == board_id;
+    select.appendChild(opt);
+  }
+  select.addEventListener("change", () => {
+    if (g_ng_word_list.some(value => value[0] == text && value[6] == select.value)) {
+      alert("同じNGワードが既にあります");
+      refreshNgList();
+      return;
+    }
+    let index = g_ng_word_list.findIndex(value => value[0] == text && value[6] == select.name);
+    if (index > -1) {
+      g_ng_word_list[index][6] = select.value;
+      select.name = select.value;
+      saveSetting();
+    } else {
+      refreshNgList();
+    }
+  });
+  div_select.appendChild(select);
   item.appendChild(div_select);
 
   item.appendChild(document.createTextNode("　" + text));
