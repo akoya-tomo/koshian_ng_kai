@@ -38,7 +38,9 @@
 **GitHub**  
 [![インストールボタン](images/install_button.png "クリックでアドオンをインストール")](https://github.com/akoya-tomo/koshian_ng_kai/releases/download/v1.8.1/koshian_ng_kai-1.8.1-fx.xpi)
 
-※![\(New\)](images/new.png "New") v1.8.1からアドオンのアクセス許可にふたポの過去ログ\(`kako.futakuro.com`\)・「」ッチー(`tsumanne.net`)・FTBucket(`www.ftbucket.info`)が追加になります。（ログサイトで動作させるため）  
+※![\(New\)](images/new.png "New") v1.8.1からアドオンのアクセス許可に「」ッチー(`tsumanne.net`)・FTBucket(`www.ftbucket.info`)が追加になります。（アドオンを動作させるため）  
+※v1.5.1からアドオンのアクセス許可にふたポの過去ログ\(`kako.futakuro.com`\)が追加になります。（アドオンを動作させるため） 
+
 ※「接続エラーのため、アドオンをダウンロードできませんでした。」と表示されてインストール出来ないときはインストールボタンを右クリックしてxpiファイルをダウンロードし、メニューのツール→アドオン（またはCtrl+Shift+A）で表示されたアドオンマネージャーのページにxpiファイルをドラッグ＆ドロップして下さい。  
 
 ## 追加機能の補足
