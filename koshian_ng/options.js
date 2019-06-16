@@ -82,14 +82,14 @@ function addItem(text, check, board_id = "") {
     check_box[i].type = "checkbox";
     check_box[i].checked = check[i];
     check_box[i].style.margin = "auto";
-    check_box[i].addEventListener("click", (e) => { // eslint-disable-line no-unused-vars
-      for (let j = 0; j < g_ng_word_list.length; ++j) {
-        if (g_ng_word_list[j][0] == text) {
-          g_ng_word_list[j][i + 1] = check_box[i].checked;
-          break;
-        }
+    check_box[i].addEventListener("change", () => {
+      let index = g_ng_word_list.findIndex(value => value[0] == text && value[6] == board_id);
+      if (index > -1) {
+        g_ng_word_list[index][i + 1] = check_box[i].checked;
+        saveSetting();
+      } else {
+        refreshNgList();
       }
-      saveSetting();
     });
 
     div[i] = document.createElement("div");
