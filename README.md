@@ -36,9 +36,9 @@
 
 ## インストール
 **GitHub**  
-[![インストールボタン](images/install_button.png "クリックでアドオンをインストール")](https://github.com/akoya-tomo/koshian_ng_kai/releases/download/v1.8.1/koshian_ng_kai-1.8.1-fx.xpi)
+[![インストールボタン](images/install_button.png "クリックでアドオンをインストール")](https://github.com/akoya-tomo/koshian_ng_kai/releases/download/v1.8.2/koshian_ng_kai-1.8.2-fx.xpi)
 
-※![\(New\)](images/new.png "New") v1.8.1からアドオンのアクセス許可に「」ッチー(`tsumanne.net`)・FTBucket(`www.ftbucket.info`)が追加になります。（アドオンを動作させるため）  
+※![\(New\)](images/new.png "New") v1.8.1からアドオンのアクセス許可に「」ッチー(`tsumanne.net`)・FTBucket(`ftbucket.info`)が追加になります。（アドオンを動作させるため）  
 ※v1.5.1からアドオンのアクセス許可にふたポの過去ログ\(`kako.futakuro.com`\)が追加になります。（アドオンを動作させるため） 
 
 ※「接続エラーのため、アドオンをダウンロードできませんでした。」と表示されてインストール出来ないときはインストールボタンを右クリックしてxpiファイルをダウンロードし、メニューのツール→アドオン（またはCtrl+Shift+A）で表示されたアドオンマネージャーのページにxpiファイルをドラッグ＆ドロップして下さい。  
@@ -59,6 +59,8 @@
 * ![\(New\)](images/new.png "New") \[隠す\]ボタン操作直後に再読み込みやタブを閉じると記憶されないことがある  
 
 ## 更新履歴
+* v1.8.2 2019-06-17
+  - FTBucketのアドレスを修正  
 * v1.8.1 2019-06-16
   - \[隠す\]ボタンで隠したレスをブラウザを閉じても記憶するように変更  
   - コンテキストメニューからスレのID・IPのNG登録ができるように修正
