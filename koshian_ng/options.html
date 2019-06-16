@@ -8,21 +8,7 @@
   <link rel="icon" type="image/png" href="icons/icon-48.png">
   <script src="boardlist.js"></script>
   <script src="options.js"></script>
-  <style type="text/css">
-    .title {font-size: 150%; background-color: #ededf0; padding: 10px;}
-    .icon {vertical-align: middle;}
-    .main {padding: 10px; border-style: solid ; border-width: 0 5px 5px 5px; border-color: #ededf0;}
-    hr {border: none; border-top: solid 1px #d7d7db; height: 1px; margin: 10px 0;}
-    #ng_input, #ng_submit {margin-bottom: 5px;}
-    .item_btn {display: inline-block; min-width: 49px; max-width: 49px; border-right: solid 1px;}
-    .col_btn {display: inline-block; min-width: 50px; max-width: 50px;}
-    .item_check, .col_check {display: inline-block; min-width: 50px; max-width: 50px; border-right: solid 1px; text-align: center;}
-    .item_select {display: inline-block; min-width: 120px; max-width: 120px; border-right: solid 1px;}
-    .col_select {display: inline-block; min-width: 120px; max-width: 120px; border-right: solid 1px; font-size: 90%;}
-    .item_text, .col_text {display: inline-block;}
-    #ng_list > div:nth-child(2n) {background-color: #e3e4e6};
-    #export_a {display: none;}
-  </style>
+  <link rel="stylesheet" type="text/css" href="options.css">
 </head>
 
 <body>
@@ -42,10 +28,10 @@
       <input type="checkbox" id="use_contextmenu">
       <label for="use_contextmenu">コンテキストメニューからID・IPをNGワード登録する</label>
       <br>
-      　<input type="checkbox" id="regist_id_temp">
+      <input type="checkbox" id="regist_id_temp" class="sub">
       <label for="regist_id_temp">IDは一時的に登録する</label>
       <br>
-      　<input type="checkbox" id="regist_ip_temp">
+      <input type="checkbox" id="regist_ip_temp" class="sub last">
       <label for="regist_ip_temp">IPは一時的に登録する</label>
     </p>
     <hr>
@@ -53,34 +39,39 @@
       <p>
         NGワード (正規表現が使えます)<br>
         <input type="text" id="ng_input" placeholder="NGワードを入力" autofocus>
-        <input type="button" value="追加", id = "ng_submit">
+        <input type="button" value="追加", id="ng_submit">
         <br>
         <input type="checkbox" id="check_body">
-        <label for="check_body">本文　</label>
+        <label for="check_body" class="check_label">本文</label>
         <input type="checkbox" id="check_header">
-        <label for="check_header">メール欄など　</label>
+        <label for="check_header" class="check_label">メール欄など</label>
         <input type="checkbox" id="ignore_case">
-        <label for="ignore_case" >大文字/小文字を区別しない　</label>
+        <label for="ignore_case" class="check_label">大文字/小文字を区別しない</label>
         <input type="checkbox" id="temporary_regist">
-        <label for="temporary_regist" >一時的に登録　</label>
+        <label for="temporary_regist" class="check_label">一時的に登録</label>
         <br>
         NG対象<br>
         <select id="board_list"></select>
       </p>
       <p>
-        <div class="item_btn">　</div><div class="item_check">本文</div><div class="item_check">メ欄</div><div class="item_check">大/小</div><div class="item_check">一時</div><div class="item_select">　NG対象</div><div class="item_text">　NGワード</div>
+        <div class="item_btn">　</div><div class="item_check">本文</div><div class="item_check">メ欄</div><div class="item_check">大/小</div><div class="item_check">一時</div><div class="item_select">NG対象</div><div class="item_text">NGワード</div>
       </p>
       <p id="ng_list">
       </p>
     </ul>
     <hr>
     <p>
-      <input type="file" id="file" accept=".csv, text/csv">　<input type="button" id="import" value="インポート">
+      <input type="file" id="file" accept=".csv, text/csv"><input type="button" id="import" value="インポート">
       <br>
       <span id="alert"></span>
       <br>
       <input type="button" id="export" value="エクスポート">
       <a id="export_a"></a>
+    </p>
+    <hr>
+    <p>
+      記憶するスレの数<br>
+      <input type="number" id="max_threads" min="0">
     </p>
   </div>
 </body>

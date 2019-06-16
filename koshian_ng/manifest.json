@@ -3,7 +3,7 @@
 
     "name":"KOSHIAN NG 改",
 
-    "version":"1.7.0",
+    "version":"1.8.1",
 
     "applications": {
         "gecko": {
@@ -25,7 +25,7 @@
 
     "content_scripts":[
         {
-            "matches":["*://*.2chan.net/*/res/*","*://kako.futakuro.com/futa/*_b/*"],
+            "matches":["*://*.2chan.net/*/res/*", "*://kako.futakuro.com/futa/*_b/*", "*://tsumanne.net/*/data/*", "*://www.ftbucket.info/*/cont/*"],
             "js":["res.js"]
         }
     ],

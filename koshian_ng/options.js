@@ -1,7 +1,7 @@
 /* globals board_list */
 
-const check_box_num = 4;  // NGワードのワード当たりのチェックボックスの数
-const check_box_max_num = 5;  // NGワードのワード当たりの最大チェックボックス数（5で固定）
+const CHECK_BOX_NUM = 4;  // NGワードのワード当たりのチェックボックスの数
+const CHECK_BOX_MAX_NUM = 5;  // NGワードのワード当たりの最大チェックボックス数（5で固定）
 
 let g_hide_completely = null;
 let g_ng_input = null;
@@ -23,10 +23,11 @@ let g_import = null;
 let g_alert = null;
 let g_export = null;
 let g_export_a  = null;
+let g_max_threads = null;
 
 /* eslint indent: ["warn", 2] */
 
-function onError(error) {
+function onError(error) { // eslint-disable-line no-unused-vars
 }
 
 function safeGetValue(value, default_value) {
@@ -45,63 +46,91 @@ function saveSetting() {
     hide_size: g_hide_size.value,
     use_contextmenu: g_use_contextmenu.checked,
     regist_id_temp: g_regist_id_temp.checked,
-    regist_ip_temp: g_regist_ip_temp.checked
+    regist_ip_temp: g_regist_ip_temp.checked,
+    max_threads: g_max_threads.value
   });
 }
 
 /**
- * NGワードリストにNGワードを追加
- * @param {string} text 追加するNGワード
- * @param {Array.<boolean>} check 追加するNGワードのチェックボックスの状態
- * @param {string} board_dir 追加する対象
+ * NGワードリストの表示欄にNGワードの項目を追加
+ * @param {string} text 表示を追加するNGワード
+ * @param {Array.<boolean>} check 表示を追加するNGワードのチェックボックスの状態
+ * @param {string} board_id 表示を追加するNGワードの対象板ID
  */
-function addItem(text, check, board_dir = "") {
+function addItem(text, check, board_id = "") {
   let item = document.createElement("div");
-  let btn = document.createElement("input");
-  let div = [], check_box = [];
 
+  let btn = document.createElement("input");
   btn.type = "button";
   btn.value = "削除";
   btn.className = "col_btn";
-  btn.addEventListener("click", (e) => {
+  btn.addEventListener("click", (e) => {  // eslint-disable-line no-unused-vars
     let result = window.confirm(`${text}を削除してもよろしいですか？`);
     if (result) {
       item.remove();
       g_ng_word_list = g_ng_word_list.filter((value) => {
-        return value[0] != text || value[6] != board_dir;
+        return value[0] != text || value[6] != board_id;
       });
       saveSetting();
     }
   });
   item.appendChild(btn);
 
-  for (let i = 0; i < check_box_num; i++){
+  let div_check = [], check_box = [];
+  for (let i = 0; i < CHECK_BOX_NUM; i++){
     check_box[i] = document.createElement("input");
     check_box[i].type = "checkbox";
     check_box[i].checked = check[i];
-    check_box[i].style.margin = "auto";
-    check_box[i].addEventListener("click", (e) => {
-      for (let j = 0; j < g_ng_word_list.length; ++j) {
-        if (g_ng_word_list[j][0] == text) {
-          g_ng_word_list[j][i + 1] = check_box[i].checked;
-          break;
-        }
+    check_box[i].addEventListener("change", () => {
+      let index = g_ng_word_list.findIndex(value => value[0] == text && value[6] == board_id);
+      if (index > -1) {
+        g_ng_word_list[index][i + 1] = check_box[i].checked;
+        saveSetting();
+      } else {
+        refreshNgList();
       }
-      saveSetting();
     });
-
-    div[i] = document.createElement("div");
-    div[i].className = "col_check";
-    div[i].appendChild(check_box[i]);
-    item.appendChild(div[i]);
+    div_check[i] = document.createElement("div");
+    div_check[i].className = "col_check";
+    div_check[i].appendChild(check_box[i]);
+    item.appendChild(div_check[i]);
   }
 
   let div_select = document.createElement("div");
   div_select.className = "col_select";
-  div_select.appendChild(document.createTextNode("　" + board_list[board_dir].name));
+  let select = document.createElement("select");
+  select.name = board_id;
+  for (let key in board_list) {
+    let opt = document.createElement("option");
+    opt.value = key;
+    opt.text = board_list[key].name;
+    opt.disabled = board_list[key].disabled ? true : false;
+    opt.selected = key == board_id;
+    select.appendChild(opt);
+  }
+  select.addEventListener("change", () => {
+    if (g_ng_word_list.some(value => value[0] == text && value[6] == select.value)) {
+      alert("同じNGワードが既にあります");
+      refreshNgList();
+      return;
+    }
+    let index = g_ng_word_list.findIndex(value => value[0] == text && value[6] == select.name);
+    if (index > -1) {
+      g_ng_word_list[index][6] = select.value;
+      select.name = select.value;
+      saveSetting();
+    } else {
+      refreshNgList();
+    }
+  });
+  div_select.appendChild(select);
   item.appendChild(div_select);
 
-  item.appendChild(document.createTextNode("　" + text));
+  let div_text = document.createElement("div");
+  div_text.className = "col_text";
+  div_text.textContent = text;
+  item.appendChild(div_text);
+
   g_ng_list.appendChild(item);
 }
 
@@ -112,7 +141,7 @@ function refreshNgList() {
   g_ng_list.textContent = null; // g_ng_listの子要素を全削除
   for (let i = 0; i < g_ng_word_list.length; ++i) {
     let check =[];
-    for (let j = 0; j < check_box_num; j++) {
+    for (let j = 0; j < CHECK_BOX_NUM; j++) {
       check.push(g_ng_word_list[i][j + 1]);
     }
     addItem(g_ng_word_list[i][0], check, g_ng_word_list[i][6]);
@@ -127,6 +156,7 @@ function setCurrentChoice(result) {
   g_regist_id_temp.checked = safeGetValue(result.regist_id_temp, true);
   g_regist_ip_temp.checked = safeGetValue(result.regist_ip_temp, true);
   g_ng_word_list = safeGetValue(result.ng_word_list, []);
+  g_max_threads.value = safeGetValue(result.max_threads, 512);
 
   g_regist_id_temp.disabled = !g_use_contextmenu.checked;
   g_regist_ip_temp.disabled = !g_use_contextmenu.checked;
@@ -154,6 +184,7 @@ function onLoad() {
   g_alert = document.getElementById("alert");
   g_export = document.getElementById("export");
   g_export_a = document.getElementById("export_a");
+  g_max_threads = document.getElementById("max_threads");
 
   g_check_body.checked = "checked";
 
@@ -169,7 +200,9 @@ function onLoad() {
   g_regist_ip_temp.addEventListener("change", saveSetting);
 
   g_ng_input.addEventListener("keypress", (e) => {
-    if (e.key == "Enter") addNgWord();
+    if (e.key == "Enter"){
+      addNgWord();
+    }
   });
 
   g_ng_submit.addEventListener("click", addNgWord);
@@ -182,6 +215,8 @@ function onLoad() {
     importCsv(reader.result);
   });
   g_export.addEventListener("click", exportCsv);
+
+  g_max_threads.addEventListener("change", saveSetting);
 
   for (let key in board_list) {
     let opt = document.createElement("option");
@@ -197,8 +232,9 @@ function onLoad() {
    * NGワード追加
    */
   function addNgWord() {
-    if (g_ng_input.value == "") return;
-
+    if (g_ng_input.value == "") {
+      return;
+    }
     // 登録と重複したワードを削除
     g_ng_word_list = g_ng_word_list.filter((value) => {
       return value[0] != g_ng_input.value || value[6] != g_board_list.value;
@@ -228,8 +264,10 @@ function importCsv(csv) {
     g_alert.textContent = "NGワードファイルではありません";
     return;
   }
-  for (let i = 0; i < line.length - 1; i++) {
-    if (!line[i + 1]) continue;
+  for (let i = 0, line_num = line.length - 1; i < line_num; ++i) {
+    if (!line[i + 1]) {
+      continue;
+    }
     arr[i] = line[i + 1].split(",");
     if (!arr[i][0] || !arr[i][1] || (arr[i][1].toLowerCase() !== "true" && arr[i][1].toLowerCase() !== "false")) {
       g_alert.textContent = "ファイルのデータが異常です";
@@ -237,16 +275,13 @@ function importCsv(csv) {
     }
   }
   g_ng_word_list = [];
-  for (let i = 0; i < arr.length; i++) {
+  for (let i = 0, arr_num = arr.length; i < arr_num; ++i) {
     g_ng_word_list[i] = [];
-    for (let j = 0; j < check_box_num + 1; j++) {
-      if (j == 0) {
-        g_ng_word_list[i].push(decodeURIComponent(arr[i][j]));
-      } else {
-        g_ng_word_list[i].push(arr[i][j] ? arr[i][j].toLowerCase() === "true" : false);
-      }
+    g_ng_word_list[i].push(decodeURIComponent(arr[i][0]));
+    for (let j = 1; j <= CHECK_BOX_NUM; ++j) {
+      g_ng_word_list[i].push(arr[i][j] ? arr[i][j].toLowerCase() === "true" : false);
     }
-    for (let j = check_box_num + 1; j < check_box_max_num + 1; j++) {
+    for (let j = CHECK_BOX_NUM + 1; j <= CHECK_BOX_MAX_NUM; ++j) {
       g_ng_word_list[i].push(null);
     }
     g_ng_word_list[i].push(arr[i][6] ? arr[i][6] : "");
@@ -294,31 +329,10 @@ function onSettingChanged(changes, areaName) {
     return;
   }
 
-  let changed_items = Object.keys(changes);
-  for (let item of changed_items) {
-    if (item == "hide_completely") {
-      g_hide_completely.checked = safeGetValue(changes.hide_completely.newValue, false);
-    }
-    if (item == "ng_word_list") {
-      g_ng_word_list = safeGetValue(changes.ng_word_list.newValue, []);
-    }
-    if (item == "put_hide_button") {
-      g_put_hide_button.checked = safeGetValue(changes.put_hide_button.newValue, true); 
-    }
-    if (item == "hide_size") {
-      g_hide_size.value = safeGetValue(changes.hide_size.newValue, 16);
-    }
-    if (item == "use_contextmenu") {
-      g_use_contextmenu.checked = safeGetValue(changes.use_contextmenu.newValue, false);
-    }
-    if (item == "regist_id_temp") {
-      g_regist_id_temp.checked = safeGetValue(changes.regist_id_temp.newValue, true);
-    }
-    if (item == "regist_ip_temp") {
-      g_regist_ip_temp.checked = safeGetValue(changes.regist_ip_temp.newValue, true);
-    }
+  if (changes.ng_word_list) {
+    g_ng_word_list = safeGetValue(changes.ng_word_list.newValue, []);
+    refreshNgList();
   }
-  refreshNgList();
 }
 
 document.addEventListener("DOMContentLoaded", onLoad);

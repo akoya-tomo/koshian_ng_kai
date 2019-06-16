@@ -2,7 +2,7 @@
  * 板リスト
  */
 
-let board_list = {
+let board_list = {  // eslint-disable-line no-unused-vars
     "" : {
         name: "全ての板",
     },

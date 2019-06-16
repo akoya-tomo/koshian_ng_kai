@@ -26,6 +26,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
             documentUrlPatterns: ["*://*.2chan.net/*/res/*"]
         });
         browser.contextMenus.refresh();
+        sendResponse();
     }
 });
 
@@ -51,4 +52,4 @@ function safeGetValue(value, default_value) {
     return value === undefined ? default_value : value;
 }
 
-browser.storage.local.get().then(onLoadSetting, (err) => {});
+browser.storage.local.get().then(onLoadSetting, (err) => {});   // eslint-disable-line no-unused-vars
