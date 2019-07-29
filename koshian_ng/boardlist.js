@@ -112,6 +112,12 @@ let board_list = {  // eslint-disable-line no-unused-vars
     "dat_43" : {
         name: "二次元業界",
     },
+    "dec_74" : {
+        name: "FGO",
+    },
+    "dec_75" : {
+        name: "アイマス",
+    },
     "jun_31" : {
         name: "ゲーム",
     },
