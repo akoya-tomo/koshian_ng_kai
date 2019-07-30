@@ -271,6 +271,12 @@ let board_list = {  // eslint-disable-line no-unused-vars
     "zip_6" : {
         name: "ニュース表",
     },
+    "dec_76" : {
+        name: "昭和",
+    },
+    "dec_77" : {
+        name: "平成",
+    },
     "dec_53" : {
         name: "発電",
     },

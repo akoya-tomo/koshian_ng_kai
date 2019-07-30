@@ -36,7 +36,7 @@
 
 ## インストール
 **GitHub**  
-[![インストールボタン](images/install_button.png "クリックでアドオンをインストール")](https://github.com/akoya-tomo/koshian_ng_kai/releases/download/v1.8.3/koshian_ng_kai-1.8.3-fx.xpi)
+[![インストールボタン](images/install_button.png "クリックでアドオンをインストール")](https://github.com/akoya-tomo/koshian_ng_kai/releases/download/v1.8.4/koshian_ng_kai-1.8.4-fx.xpi)
 
 ※v1.8.1からアドオンのアクセス許可に「」ッチー(`tsumanne.net`)・FTBucket(`ftbucket.info`)が追加になります。（アドオンを動作させるため）  
 ※v1.5.1からアドオンのアクセス許可にふたポの過去ログ\(`kako.futakuro.com`\)が追加になります。（アドオンを動作させるため） 
@@ -61,6 +61,8 @@
   - ブラウザを再起動することで表示されるようになります。  
 
 ## 更新履歴
+* v1.8.4 2019-07-31
+  - 新板（昭和・平成）を追加
 * v1.8.3 2019-07-29
   - 新板（FGO・アイマス）を追加
 * v1.8.2 2019-06-17
