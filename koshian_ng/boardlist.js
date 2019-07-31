@@ -118,6 +118,9 @@ let board_list = {  // eslint-disable-line no-unused-vars
     "dec_75" : {
         name: "アイマス",
     },
+    "dec_78" : {
+        name: "ウメハラ総合",
+    },
     "jun_31" : {
         name: "ゲーム",
     },
@@ -228,6 +231,9 @@ let board_list = {  // eslint-disable-line no-unused-vars
     },
     "nov_36" : {
         name: "経済",
+    },
+    "dec_79" : {
+        name: "宗教",
     },
     "dec_50" : {
         name: "三次実況",
