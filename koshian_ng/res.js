@@ -60,8 +60,9 @@ function setThreadId() {
             }
             break;
         case "www.ftbucket.info":
+        case "dev.ftbucket.info":
             // ftbucket
-            match = location.href.match(/^https?:\/\/www.ftbucket.info\/.+\/cont\/([^./]+)\.2chan.net_([^_/]+)_res_(\d+)\/index.htm/);
+            match = location.href.match(/^https?:\/\/[^.]+.ftbucket.info\/.+\/cont\/([^./]+)\.2chan.net_([^_/]+)_res_(\d+)\/index.htm/);
             if (match) {
                 board_id = match[1] + "_" + match[2];
                 thread_id = board_id + "_" + match[3];
