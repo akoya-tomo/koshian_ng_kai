@@ -82,9 +82,9 @@ function setThreadId() {
 }
 
 /**
- * レス番号取得
- * @param {HTMLElement} target レス番号を取得するレスのHTML要素(.rtd or .thre)
- * @return {string} レス番号の数字部分。レス番号が無ければ空文字
+ * レスNo.取得
+ * @param {Element} target レスNo.を取得するレスの要素(.rtd or .thre)
+ * @return {string} レスNo.の数字部分。レスNo.が無ければ空文字
  */
 function getResponseNumber(target) {
     if (target) {
@@ -92,6 +92,12 @@ function getResponseNumber(target) {
             let node_value = node.nodeValue;
             if (node_value) {
                 let match = node_value.match(/No.(\d+)/);
+                if (match) {
+                    return match[1];
+                }
+            } else if (node.className == "KOSHIAN_NumberButton") {
+                // KOSHIAN 引用メニュー 改
+                let match = node.textContent.match(/No.(\d+)/);
                 if (match) {
                     return match[1];
                 }
