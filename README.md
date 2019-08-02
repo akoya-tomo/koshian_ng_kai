@@ -36,7 +36,7 @@
 
 ## インストール
 **GitHub**  
-[![インストールボタン](images/install_button.png "クリックでアドオンをインストール")](https://github.com/akoya-tomo/koshian_ng_kai/releases/download/v1.8.5/koshian_ng_kai-1.8.5-fx.xpi)
+[![インストールボタン](images/install_button.png "クリックでアドオンをインストール")](https://github.com/akoya-tomo/koshian_ng_kai/releases/download/v1.8.6/koshian_ng_kai-1.8.6-fx.xpi)
 
 ※v1.8.1からアドオンのアクセス許可に「」ッチー(`tsumanne.net`)・FTBucket(`ftbucket.info`)が追加になります。（アドオンを動作させるため）  
 ※v1.5.1からアドオンのアクセス許可にふたポの過去ログ\(`kako.futakuro.com`\)が追加になります。（アドオンを動作させるため） 
@@ -61,6 +61,9 @@
   - ブラウザを再起動することで表示されるようになります。  
 
 ## 更新履歴
+* v1.8.6 2019-08-02
+  - dev.ftbucket.infoで隠したレスが記憶されない不具合を修正
+  - レスNo.の取得に失敗することがある不具合を修正
 * v1.8.5 2019-08-01
   - 新板（ウメハラ総合・宗教）を追加
 * v1.8.4 2019-07-31
