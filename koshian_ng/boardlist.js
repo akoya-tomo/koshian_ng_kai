@@ -235,11 +235,14 @@ let board_list = {  // eslint-disable-line no-unused-vars
     "dec_79" : {
         name: "宗教",
     },
+    "dat_38" : {
+        name: "文在寅",
+    },
+    "dec_80" : {
+        name: "安倍晋三",
+    },
     "dec_50" : {
         name: "三次実況",
-    },
-    "dat_38" : {
-        name: "韓国経済",
     },
     "cgi_f" : {
         name: "軍",
