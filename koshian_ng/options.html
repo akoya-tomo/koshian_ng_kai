@@ -34,6 +34,10 @@
       <input type="checkbox" id="regist_ip_temp" class="sub last">
       <label for="regist_ip_temp">IPは一時的に登録する</label>
     </p>
+    <p>
+      <input type="checkbox" id="use_contextmenu_img">
+      <label for="use_contextmenu_img">コンテキストメニューからサムネをNG画像登録する</label>
+    </p>
     <hr>
     <ul style="list-style-type: none">
       <p>
@@ -50,14 +54,20 @@
         <input type="checkbox" id="temporary_regist">
         <label for="temporary_regist" class="check_label">一時的に登録</label>
         <br>
+        <input type="checkbox" id="ng_image">
+        <label for="ng_image" class="check_label">サムネ画像NG</label>NGワード欄に以下の値を半角で入力
+        <br>
+        <span class="sub">サムネ幅,サムネ高さ,画像サイズ（バイト）,コメント（全角OK・任意）</span>
+        <br>
+        <span class="sub">例：250,185,10240,ワグナス！</span>
+        <br>
         NG対象<br>
         <select id="board_list"></select>
       </p>
-      <p>
-        <div class="item_btn">　</div><div class="item_check">本文</div><div class="item_check">メ欄</div><div class="item_check">大/小</div><div class="item_check">一時</div><div class="item_select">NG対象</div><div class="item_text">NGワード</div>
-      </p>
-      <p id="ng_list">
-      </p>
+      <div id="ng_list_container">
+        <div class="item_btn">　</div><div class="item_check">本文</div><div class="item_check">メ欄</div><div class="item_check">大/小</div><div class="item_check">一時</div><div class="item_check">画像</div><div class="item_select">NG対象</div><div class="item_text">NGワード</div>
+        <div id="ng_list"></div>
+      </div>
     </ul>
     <hr>
     <p>

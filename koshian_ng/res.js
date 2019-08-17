@@ -8,6 +8,7 @@ let hide_size = 16;
 let use_contextmenu = false;
 let regist_id_temp = true;
 let regist_ip_temp = true;
+let use_contextmenu_img = true;
 let max_threads = 512;
 let hide_res_list = {};
 let have_input = false;
@@ -16,6 +17,7 @@ let have_del = false;
 let words_changed = false;
 let show_deleted_res = false;
 let context_idip = null;
+let context_img = null;
 let board_id = "";
 let thread_id = "";
 
@@ -156,7 +158,7 @@ function switchNG(e){
         if (akahuku_preview) {
             akahuku_preview.style.display = "none";
         }
-        e.target.textContent = `[NGワード]`;
+        e.target.textContent = e.target.name || `[NGワード]`;
     }
 
     fixFormPosition();
@@ -213,13 +215,14 @@ function switchHide(e){
     fixFormPosition();
 }
 
-function hide(block, ng_word){
+function hide(block, ng_word, is_ng_image = false){
     let btn = document.createElement("a");
     btn.className = "KOSHIAN_NGSwitch";
     btn.href="javascript:void(0)";
     btn.style.fontSize = `${hide_size}px`;
     btn.onclick = switchNG;
     btn.title = ng_word;
+    btn.name = is_ng_image ? `[NG画像]` : `[NGワード]`;
 
     let response = block.parentNode;
     if(have_sod){
@@ -329,8 +332,7 @@ function process(beg = 0, start = false){
         // ng_word[3] boolean ignore_case 大文字/小文字を区別しないか
         // ng_word[6] string ng_board NG対象板ID
         return ng_word[1] && (!ng_word[6] || ng_word[6] == board_id) ? new RegExp(ng_word[0], ng_word[3] ? "i" : "") : null;
-    });
-    body_regex_list = body_regex_list.filter(Boolean);  // 配列からnullを削除
+    }).filter(Boolean); // 配列からnullを削除
 
     /**
      * メール欄などのNGワードの正規表現の配列
@@ -342,8 +344,18 @@ function process(beg = 0, start = false){
         // ng_word[3] boolean ignore_case 大文字/小文字を区別しないか
         // ng_word[6] string ng_board NG対象板ID
         return ng_word[2] && (!ng_word[6] || ng_word[6] == board_id) ? new RegExp(ng_word[0], ng_word[3] ? "i" : "") : null;
-    });
-    header_regex_list = header_regex_list.filter(Boolean);  // 配列からnullを削除
+    }).filter(Boolean); // 配列からnullを削除
+
+    /**
+     * サムネ画像NGの配列
+     * @type {Array.<RegExp>}
+     */
+    let ng_image_list = ng_word_list.map((ng_word) => {
+        // ng_word[0] string ng_input NGワード
+        // ng_word[5] boolean ng_image サムネ画像NG
+        // ng_word[6] string ng_board NG対象板ID
+        return ng_word[5] && (!ng_word[6] || ng_word[6] == board_id) ? ng_word[0] : null;
+    }).filter(Boolean); // 配列からnullを削除
 
     show_deleted_res = isDeletedResShown(); // 削除レスの表示状態を確認
 
@@ -418,6 +430,38 @@ function process(beg = 0, start = false){
             }
         }
 
+        // サムネ画像検索
+        let img = responses[i].getElementsByTagName("img")[0];
+        if (img && img.alt && img.width && img.height) {
+            let size = parseInt(img.alt, 10);
+            for (let i = 0, list_num = ng_image_list.length; i < list_num; ++i) {
+                let ng_image = ng_image_list[i].split(",");
+                // ng_image[0] サムネ幅
+                // ng_image[1] サムネ高さ
+                // ng_image[2] 画像サイズ
+                // ng_image[3] コメント
+                if (ng_image.length >= 3) {
+                    let ng_width = parseInt(ng_image[0], 10);
+                    let ng_height = parseInt(ng_image[1], 10);
+                    let ng_size = ng_image[2].split("-");
+                    ng_size[0] = parseInt(ng_size[0], 10);
+                    if (ng_size.length < 2) {
+                        ng_size[1] = ng_size[0];
+                    } else {
+                        ng_size[1] = parseInt(ng_size[1], 10);
+                        if (ng_size[0] > ng_size[1]) {
+                            ng_size = ng_size.reverse().slice(-2);
+                        }
+                    }
+                    let text = ng_image[3] ? `【${ng_image[3]}】${block_text}` : block_text;
+                    if (img.width == ng_width && img.height == ng_height && size >= ng_size[0] && size <= ng_size[1]) {
+                        hideBlock(block, text, true);
+                        continue loop;
+                    }
+                }
+            }
+        }
+
         if (put_hide_button) {
             let res_number = "";
             if (start && !hide && thread_id) {
@@ -448,11 +492,11 @@ function process(beg = 0, start = false){
 
     last_process_num = end;
 
-    function hideBlock(block, ng_word){
+    function hideBlock(block, ng_word, is_ng_image = false){
         if(hide_completely){
             hideComopletely(block);
         }else{
-            hide(block, ng_word);
+            hide(block, ng_word, is_ng_image);
         }
     }
 }
@@ -506,19 +550,21 @@ function isDeletedResShown() {
  * コンテキストメニューからNG登録
  * @param {string} text ID・IP文字列
  */
-function onClickNg(text) {
+function onClickNg(text, is_ng_image = false) {
     if (!text) {
         return;
     }
-    text = text.replace(/[\\^$.*+?()[\]{}|]/g, "\\$&"); // エスケープが必要な文字にエスケープを追加
-    addNgWord(text);
+    if (!is_ng_image) {
+        text = text.replace(/[\\^$.*+?()[\]{}|]/g, "\\$&"); // エスケープが必要な文字にエスケープを追加
+    }
+    addNgWord(text, is_ng_image);
 }
 
 /**
  * NGワード登録
  * @param {RegExp} text 登録するNGワード
  */
-function addNgWord(text) {
+function addNgWord(text, is_ng_image = false) {
     if (!text) {
         return;
     }
@@ -527,6 +573,15 @@ function addNgWord(text) {
         return value[0] != text || value[6];
     });
 
+    if (is_ng_image) {
+        let comment = prompt("NG画像のコメントを入力してください（キャンセルでNG登録中止します）");
+        if (comment == null) {
+            return;
+        }
+        if (comment) {
+            text += `,${comment}`;
+        }
+    }
     let temp_regist = false;
     if (text.match(/^ID:\S{8}$/)) {
         temp_regist = regist_id_temp;
@@ -534,21 +589,44 @@ function addNgWord(text) {
     if (text.match(/^IP:[^\s[]+$/)) {
         temp_regist = regist_ip_temp;
     }
-    ng_word_list.push([text, false, true, false, temp_regist, null, ""]);
+    ng_word_list.push([text, false, !is_ng_image, false, temp_regist, is_ng_image, ""]);
     browser.storage.local.set({
         ng_word_list: ng_word_list
     });
-    alert("NGワードを登録しました");
+    if (!is_ng_image) {
+        alert("NGワードを登録しました");
+    }
+}
+
+function onContextmenu(e) {
+    context_img = null;
+    context_idip = null;
+    if (use_contextmenu_img) {
+        let img = e.target.closest("img");
+        if (img && img.alt && img.width && img.height) {
+            let img_a = img.parentNode;
+            if (img_a && img_a.nodeName == "A") {
+                let filename = img_a.href ? img_a.href.match(/\d+\.[a-zA-Z0-9]+$/) : null;
+                if (filename) {
+                    context_img = `${img.width},${img.height},${parseInt(img.alt, 10)}`;
+                    browser.runtime.sendMessage({
+                        id: "koshian_ng_img",
+                        text: filename[0]
+                    });
+                    return;
+                }
+            }
+        }
+    } 
+    if (use_contextmenu) {
+        getIdIp(e);
+    }
 }
 
 /**
  * ID・IPを取得してコンテキストメニューに反映
  */
 function getIdIp(e) {
-    context_idip = null;
-    if (!use_contextmenu) {
-        return;
-    }
     let rtd = e.target.closest(".rtd");
     if (rtd) {
         context_idip = searchIdIp(rtd);
@@ -645,14 +723,16 @@ function main(){
                 selection: sel,
                 board_id: board_id
             });
-        }
-        if (message.id == "koshian_ng_context") {
+        } else if (message.id == "koshian_ng_context_idip") {
             onClickNg(context_idip);
+            sendResponse();
+        } else if (message.id == "koshian_ng_context_img") {
+            onClickNg(context_img, true);
             sendResponse();
         }
     });
 
-    document.addEventListener("contextmenu", getIdIp, false);
+    document.addEventListener("contextmenu", onContextmenu, false);
 }
 
 function onLoadSetting(result) {
@@ -663,6 +743,7 @@ function onLoadSetting(result) {
     use_contextmenu = safeGetValue(result.use_contextmenu, false);
     regist_id_temp = safeGetValue(result.regist_id_temp, true);
     regist_ip_temp = safeGetValue(result.regist_ip_temp, true);
+    use_contextmenu_img = safeGetValue(result.use_contextmenu_img, true);
     max_threads = safeGetValue(result.max_threads, 512);
     hide_res_list = JSON.parse(safeGetValue(result.hide_res_list, "{}"));
 
@@ -691,6 +772,7 @@ function onSettingChanged(changes, areaName) {
         use_contextmenu = safeGetValue(changes.use_contextmenu.newValue, false);
         regist_id_temp = safeGetValue(changes.regist_id_temp.newValue, true);
         regist_ip_temp = safeGetValue(changes.regist_ip_temp.newValue, true);
+        use_contextmenu_img = safeGetValue(changes.use_contextmenu_img.newValue, true);
         max_threads = safeGetValue(changes.max_threads.newValue, 512);
     }
     if (changes.ng_word_list) {

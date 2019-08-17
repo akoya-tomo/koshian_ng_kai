@@ -86,7 +86,7 @@ function onLoad() {
             return value[0] != g_ng_input.value || value[6] != g_board_list.value;
         });
 
-        g_ng_word_list.push([g_ng_input.value, g_check_body.checked, g_check_header.checked, g_ignore_case.checked, g_temporary_regist.checked, null, g_board_list.value]);
+        g_ng_word_list.push([g_ng_input.value, g_check_body.checked, g_check_header.checked, g_ignore_case.checked, g_temporary_regist.checked, false, g_board_list.value]);
         g_ng_input.value = "";
         saveSetting();
         alert("NGワードを登録しました");

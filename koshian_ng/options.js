@@ -1,6 +1,6 @@
 /* globals board_list */
 
-const CHECK_BOX_NUM = 4;  // NGワードのワード当たりのチェックボックスの数
+const CHECK_BOX_NUM = 5;  // NGワードのワード当たりのチェックボックスの数
 const CHECK_BOX_MAX_NUM = 5;  // NGワードのワード当たりの最大チェックボックス数（5で固定）
 
 let g_hide_completely = null;
@@ -12,12 +12,14 @@ let g_check_body = null;
 let g_check_header = null;
 let g_ignore_case = null;
 let g_temporary_regist = null;
+let g_ng_image = null;
 let g_board_list = null;
 let g_put_hide_button = null;
 let g_hide_size = null;
 let g_use_contextmenu = null;
 let g_regist_id_temp = null;
 let g_regist_ip_temp = null;
+let g_use_contextmenu_img = null;
 let g_file = null;
 let g_import = null;
 let g_alert = null;
@@ -47,6 +49,7 @@ function saveSetting() {
     use_contextmenu: g_use_contextmenu.checked,
     regist_id_temp: g_regist_id_temp.checked,
     regist_ip_temp: g_regist_ip_temp.checked,
+    use_contextmenu_img: g_use_contextmenu_img.checked,
     max_threads: g_max_threads.value
   });
 }
@@ -155,6 +158,7 @@ function setCurrentChoice(result) {
   g_use_contextmenu.checked = safeGetValue(result.use_contextmenu, false);
   g_regist_id_temp.checked = safeGetValue(result.regist_id_temp, true);
   g_regist_ip_temp.checked = safeGetValue(result.regist_ip_temp, true);
+  g_use_contextmenu_img.checked = safeGetValue(result.use_contextmenu_img, true);
   g_ng_word_list = safeGetValue(result.ng_word_list, []);
   g_max_threads.value = safeGetValue(result.max_threads, 512);
 
@@ -174,10 +178,12 @@ function onLoad() {
   g_use_contextmenu = document.getElementById("use_contextmenu");
   g_regist_id_temp = document.getElementById("regist_id_temp");
   g_regist_ip_temp = document.getElementById("regist_ip_temp");
+  g_use_contextmenu_img = document.getElementById("use_contextmenu_img");
   g_check_body = document.getElementById("check_body");
   g_check_header = document.getElementById("check_header");
   g_ignore_case = document.getElementById("ignore_case");
   g_temporary_regist = document.getElementById("temporary_regist");
+  g_ng_image = document.getElementById("ng_image");
   g_board_list = document.getElementById("board_list");
   g_file = document.getElementById("file");
   g_import = document.getElementById("import");
@@ -198,6 +204,7 @@ function onLoad() {
   });
   g_regist_id_temp.addEventListener("change", saveSetting);
   g_regist_ip_temp.addEventListener("change", saveSetting);
+  g_use_contextmenu_img.addEventListener("change", saveSetting);
 
   g_ng_input.addEventListener("keypress", (e) => {
     if (e.key == "Enter"){
@@ -242,8 +249,8 @@ function onLoad() {
     // NGリストの表示を更新
     refreshNgList();
 
-    addItem(g_ng_input.value, [g_check_body.checked, g_check_header.checked, g_ignore_case.checked, g_temporary_regist.checked], g_board_list.value);
-    g_ng_word_list.push([g_ng_input.value, g_check_body.checked, g_check_header.checked, g_ignore_case.checked, g_temporary_regist.checked, null, g_board_list.value]);
+    addItem(g_ng_input.value, [g_check_body.checked, g_check_header.checked, g_ignore_case.checked, g_temporary_regist.checked, g_ng_image.checked], g_board_list.value);
+    g_ng_word_list.push([g_ng_input.value, g_check_body.checked, g_check_header.checked, g_ignore_case.checked, g_temporary_regist.checked, g_ng_image.checked, g_board_list.value]);
     g_ng_input.value = "";
     saveSetting();
   }
