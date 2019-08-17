@@ -43,7 +43,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
         id: message.id,
         title: title,
         contexts: contexts,
-        documentUrlPatterns: ["*://*.2chan.net/*/res/*"]
+        documentUrlPatterns: ["*://*.2chan.net/*/res/*", "*://kako.futakuro.com/futa/*_b/*", "*://tsumanne.net/*/data/*", "*://*.ftbucket.info/*/cont/*"]
     });
     browser.contextMenus.refresh();
     sendResponse();
