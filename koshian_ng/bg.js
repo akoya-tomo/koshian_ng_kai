@@ -1,33 +1,52 @@
 let ng_word_list = [];
 
 function removeMenu(){
-    browser.contextMenus.remove("koshian_ng");
+    browser.contextMenus.removeAll();
 }
 
 browser.contextMenus.onClicked.addListener((info, tab) => {
-    if (info.menuItemId === "koshian_ng") {
-        let tab_id = tab.id;
-        browser.tabs.sendMessage(
-            tab_id, {
-                id: "koshian_ng_context",
-            }
-        );
+    let id;
+    switch (info.menuItemId) {
+        case "koshian_ng_idip":
+            id = "koshian_ng_context_idip";
+            break;
+        case "koshian_ng_img":
+            id = "koshian_ng_context_img";
+            break;
+        default:
+            return;
     }
+    browser.tabs.sendMessage(
+        tab.id, {
+            id: id
+        }
+    );
 });
 
 browser.contextMenus.onHidden.addListener(removeMenu);
 
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.id == "koshian_ng_idip") {
-        browser.contextMenus.create({
-            id: "koshian_ng",
-            title: `NG登録:${message.text}`,
-            contexts: ["page"],
-            documentUrlPatterns: ["*://*.2chan.net/*/res/*"]
-        });
-        browser.contextMenus.refresh();
-        sendResponse();
+    let title, contexts;
+    switch (message.id) {
+        case "koshian_ng_idip":
+            title = `NG登録:${message.text}`;
+            contexts = ["page"];
+            break;
+        case "koshian_ng_img":
+            title = `NG画像登録:${message.text}`;
+            contexts = ["image"];
+            break;
+        default:
+            return;
     }
+    browser.contextMenus.create({
+        id: message.id,
+        title: title,
+        contexts: contexts,
+        documentUrlPatterns: ["*://*.2chan.net/*/res/*", "*://kako.futakuro.com/futa/*_b/*", "*://tsumanne.net/*/data/*", "*://*.ftbucket.info/*/cont/*"]
+    });
+    browser.contextMenus.refresh();
+    sendResponse();
 });
 
 function onLoadSetting(result) {

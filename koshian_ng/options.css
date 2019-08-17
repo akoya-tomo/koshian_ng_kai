@@ -53,9 +53,13 @@ hr {
   padding-left: 1em;
 }
 
+#ng_list_container {
+  width: 100%; overflow-x: auto; white-space: nowrap;
+}
+
 #ng_list > div:nth-child(2n) {
-  background-color: #e3e4e6
-};
+  background-color: #e3e4e6;
+}
 
 #file {
   margin-right: 1em;
