@@ -354,7 +354,27 @@ function process(beg = 0, start = false){
         // ng_word[0] string ng_input NGワード
         // ng_word[5] boolean ng_image サムネ画像NG
         // ng_word[6] string ng_board NG対象板ID
-        return ng_word[5] && (!ng_word[6] || ng_word[6] == board_id) ? ng_word[0] : null;
+        if (ng_word[5] && (!ng_word[6] || ng_word[6] == board_id)) {
+            let ng_image = ng_word[0].split(",");
+            if (ng_image.length >= 3) {
+                let obj = {};
+                obj.width = parseInt(ng_image[0], 10);
+                obj.height = parseInt(ng_image[1], 10);
+                let ng_size = ng_image[2].split("-");
+                obj.min_size = parseInt(ng_size[0], 10);
+                if (ng_size.length < 2) {
+                    obj.max_size = obj.min_size;
+                } else {
+                    obj.max_size = parseInt(ng_size[1], 10);
+                    if (obj.min_size > obj.max_size) {
+                        [obj.min_size, obj.max_size] = [obj.max_size, obj.min_size];
+                    }
+                }
+                obj.text = ng_image[3] || "";
+                return obj;
+            }
+        }
+        return null;
     }).filter(Boolean); // 配列からnullを削除
 
     show_deleted_res = isDeletedResShown(); // 削除レスの表示状態を確認
@@ -435,29 +455,11 @@ function process(beg = 0, start = false){
         if (img && img.alt && img.width && img.height) {
             let size = parseInt(img.alt, 10);
             for (let i = 0, list_num = ng_image_list.length; i < list_num; ++i) {
-                let ng_image = ng_image_list[i].split(",");
-                // ng_image[0] サムネ幅
-                // ng_image[1] サムネ高さ
-                // ng_image[2] 画像サイズ
-                // ng_image[3] コメント
-                if (ng_image.length >= 3) {
-                    let ng_width = parseInt(ng_image[0], 10);
-                    let ng_height = parseInt(ng_image[1], 10);
-                    let ng_size = ng_image[2].split("-");
-                    ng_size[0] = parseInt(ng_size[0], 10);
-                    if (ng_size.length < 2) {
-                        ng_size[1] = ng_size[0];
-                    } else {
-                        ng_size[1] = parseInt(ng_size[1], 10);
-                        if (ng_size[0] > ng_size[1]) {
-                            ng_size = ng_size.reverse().slice(-2);
-                        }
-                    }
-                    let text = ng_image[3] ? `【${ng_image[3]}】${block_text}` : block_text;
-                    if (img.width == ng_width && img.height == ng_height && size >= ng_size[0] && size <= ng_size[1]) {
-                        hideBlock(block, text, true);
-                        continue loop;
-                    }
+                let ng_image = ng_image_list[i];
+                let text = ng_image.text ? `[${ng_image.text}] ${block_text}` : block_text;
+                if (img.width == ng_image.width && img.height == ng_image.height && size >= ng_image.min_size && size <= ng_image.max_size) {
+                    hideBlock(block, text, true);
+                    continue loop;
                 }
             }
         }
