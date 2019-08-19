@@ -29,9 +29,15 @@ console.debug("KOSHIAN_ng/res.js - is_futaba: " + is_futaba);
 
 function checkThreadMail() {
     // メール欄にID・IPスレが設定されているか確認
-    let mail = document.querySelector(".thre > div > font > b > a") || document.querySelector("body > form > div > font > b > a");
+    let mail = document.querySelector(".thre > font > b > a") || document.querySelector("body > form > div > font > b > a");
     if (mail && mail.href.match(/^mailto:i[dp]%E8%A1%A8%E7%A4%BA/i)) {
         return true;
+    }
+    let anchors = document.querySelectorAll(".thre > a");
+    for (let anchor of anchors) {
+        if (anchor.href && anchor.href.match(/^mailto:i[dp]%E8%A1%A8%E7%A4%BA/i)) {
+            return true;
+        }
     }
     // 「KOSHIAN メール欄を表示」対応
     mail = document.getElementsByClassName("KOSHIAN_meran")[0];
