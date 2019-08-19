@@ -20,6 +20,7 @@ let g_use_contextmenu = null;
 let g_regist_id_temp = null;
 let g_regist_ip_temp = null;
 let g_use_contextmenu_img = null;
+let g_hide_id_res = null;
 let g_file = null;
 let g_import = null;
 let g_alert = null;
@@ -50,6 +51,7 @@ function saveSetting() {
     regist_id_temp: g_regist_id_temp.checked,
     regist_ip_temp: g_regist_ip_temp.checked,
     use_contextmenu_img: g_use_contextmenu_img.checked,
+    hide_id_res: g_hide_id_res.checked,
     max_threads: g_max_threads.value
   });
 }
@@ -159,6 +161,7 @@ function setCurrentChoice(result) {
   g_regist_id_temp.checked = safeGetValue(result.regist_id_temp, true);
   g_regist_ip_temp.checked = safeGetValue(result.regist_ip_temp, true);
   g_use_contextmenu_img.checked = safeGetValue(result.use_contextmenu_img, true);
+  g_hide_id_res.checked = safeGetValue(result.hide_id_res, false);
   g_ng_word_list = safeGetValue(result.ng_word_list, []);
   g_max_threads.value = safeGetValue(result.max_threads, 512);
 
@@ -179,6 +182,7 @@ function onLoad() {
   g_regist_id_temp = document.getElementById("regist_id_temp");
   g_regist_ip_temp = document.getElementById("regist_ip_temp");
   g_use_contextmenu_img = document.getElementById("use_contextmenu_img");
+  g_hide_id_res = document.getElementById("hide_id_res");
   g_check_body = document.getElementById("check_body");
   g_check_header = document.getElementById("check_header");
   g_ignore_case = document.getElementById("ignore_case");
@@ -205,6 +209,7 @@ function onLoad() {
   g_regist_id_temp.addEventListener("change", saveSetting);
   g_regist_ip_temp.addEventListener("change", saveSetting);
   g_use_contextmenu_img.addEventListener("change", saveSetting);
+  g_hide_id_res.addEventListener("change", saveSetting);
 
   g_ng_input.addEventListener("keypress", (e) => {
     if (e.key == "Enter"){
