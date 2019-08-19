@@ -9,6 +9,7 @@ let use_contextmenu = false;
 let regist_id_temp = true;
 let regist_ip_temp = true;
 let use_contextmenu_img = true;
+let hide_id_res = false;
 let max_threads = 512;
 let hide_res_list = {};
 let have_input = false;
@@ -20,6 +21,25 @@ let context_idip = null;
 let context_img = null;
 let board_id = "";
 let thread_id = "";
+let is_idip_thread = checkThreadMail();
+let is_futaba = document.domain.endsWith(".2chan.net");
+
+console.debug("KOSHIAN_ng/res.js - is_idip_thread: " + is_idip_thread);
+console.debug("KOSHIAN_ng/res.js - is_futaba: " + is_futaba);
+
+function checkThreadMail() {
+    // メール欄にID・IPスレが設定されているか確認
+    let mail = document.querySelector(".thre > div > font > b > a") || document.querySelector("body > form > div > font > b > a");
+    if (mail && mail.href.match(/^mailto:i[dp]%E8%A1%A8%E7%A4%BA/i)) {
+        return true;
+    }
+    // 「KOSHIAN メール欄を表示」対応
+    mail = document.getElementsByClassName("KOSHIAN_meran")[0];
+    if (mail && mail.textContent.match(/^\[i[dp]表示/i)) {
+        return true;
+    }
+    return false;
+}
 
 /**
  * 板ID・スレッドID設定
@@ -215,14 +235,14 @@ function switchHide(e){
     fixFormPosition();
 }
 
-function hide(block, ng_word, is_ng_image = false){
+function hide(block, ng_word, btn_text = "[NGワード]"){
     let btn = document.createElement("a");
     btn.className = "KOSHIAN_NGSwitch";
     btn.href="javascript:void(0)";
     btn.style.fontSize = `${hide_size}px`;
     btn.onclick = switchNG;
     btn.title = ng_word;
-    btn.name = is_ng_image ? `[NG画像]` : `[NGワード]`;
+    btn.name = btn_text;
 
     let response = block.parentNode;
     if(have_sod){
@@ -312,11 +332,14 @@ function putHideButton(block, hide, res_number){
 
 let last_process_num = 0;
 
-function process(beg = 0, start = false){
+function process(beg = 0, loaded = false, reloaded = false){
     let responses = document.getElementsByClassName("rtd");
     let respones_num = responses.length;
 
     if(beg >= respones_num){
+        if (hide_id_res && !is_idip_thread && is_futaba && reloaded) {
+            hideIdResponses();
+        }
         return;
     }
 
@@ -458,15 +481,22 @@ function process(beg = 0, start = false){
                 let ng_image = ng_image_list[i];
                 let text = ng_image.text ? `[${ng_image.text}] ${block_text}` : block_text;
                 if (img.width == ng_image.width && img.height == ng_image.height && size >= ng_image.min_size && size <= ng_image.max_size) {
-                    hideBlock(block, text, true);
+                    hideBlock(block, text, "[NG画像]");
+
                     continue loop;
                 }
             }
         }
 
+        // ID表示レス
+        if (idip && hide_id_res && !is_idip_thread) {
+            hideBlock(block, "", "[ID表示]");
+            continue loop;
+        }
+
         if (put_hide_button) {
             let res_number = "";
-            if (start && !hide && thread_id) {
+            if (loaded && !hide && thread_id) {
                 if (have_input) {
                     let input = responses[i].getElementsByTagName("INPUT")[0];
                     if (input && input.value == "delete") {
@@ -494,11 +524,35 @@ function process(beg = 0, start = false){
 
     last_process_num = end;
 
-    function hideBlock(block, ng_word, is_ng_image = false){
+    if (hide_id_res && !is_idip_thread && is_futaba && reloaded) {
+        hideIdResponses();
+    }
+
+    function hideBlock(block, ng_word, btn_text){
         if(hide_completely){
             hideComopletely(block);
         }else{
-            hide(block, ng_word, is_ng_image);
+            hide(block, ng_word, btn_text);
+        }
+    }
+
+    function hideIdResponses() {
+        for (let i = 0; i < beg; ++i) {
+            let response = responses[i];
+            if (searchIdIp(response)) {
+                if (hide_completely) {
+                    if (response.parentNode.style.display != "none") {
+                        let block = response.getElementsByTagName("blockquote")[0];
+                        hideComopletely(block);
+                    }
+                } else {
+                    let ng_switch = response.getElementsByClassName("KOSHIAN_NGSwitch")[0];
+                    if (!ng_switch) {
+                        let block = response.getElementsByTagName("blockquote")[0];
+                        hideBlock(block, "", "[ID表示]");
+                    }
+                }
+            }
         }
     }
 }
@@ -655,7 +709,7 @@ function main(){
 
     // KOSHIAN リロード監視
     document.addEventListener("KOSHIAN_reload", () => {
-        process(last_process_num);
+        process(last_process_num, false, true);
     });
 
     // 赤福 リロード監視
@@ -680,7 +734,7 @@ function main(){
                 }
                 status = target.textContent;
                 if (status.indexOf("新着:") === 0) {
-                    process(last_process_num);
+                    process(last_process_num, false, true);
                 }
             });
         });
@@ -746,6 +800,7 @@ function onLoadSetting(result) {
     regist_id_temp = safeGetValue(result.regist_id_temp, true);
     regist_ip_temp = safeGetValue(result.regist_ip_temp, true);
     use_contextmenu_img = safeGetValue(result.use_contextmenu_img, true);
+    hide_id_res = safeGetValue(result.hide_id_res, false);
     max_threads = safeGetValue(result.max_threads, 512);
     hide_res_list = JSON.parse(safeGetValue(result.hide_res_list, "{}"));
 
@@ -775,6 +830,7 @@ function onSettingChanged(changes, areaName) {
         regist_id_temp = safeGetValue(changes.regist_id_temp.newValue, true);
         regist_ip_temp = safeGetValue(changes.regist_ip_temp.newValue, true);
         use_contextmenu_img = safeGetValue(changes.use_contextmenu_img.newValue, true);
+        hide_id_res = safeGetValue(changes.hide_id_res.newValue, false);
         max_threads = safeGetValue(changes.max_threads.newValue, 512);
     }
     if (changes.ng_word_list) {
