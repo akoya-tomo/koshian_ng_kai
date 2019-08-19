@@ -21,28 +21,48 @@ let context_idip = null;
 let context_img = null;
 let board_id = "";
 let thread_id = "";
-let is_idip_thread = checkThreadMail();
 let is_futaba = document.domain.endsWith(".2chan.net");
+let is_ftbucket = document.domain.endsWith(".ftbucket.info");
+let is_idip_thread = checkThreadMail();
 
-console.debug("KOSHIAN_ng/res.js - is_idip_thread: " + is_idip_thread);
 console.debug("KOSHIAN_ng/res.js - is_futaba: " + is_futaba);
+console.debug("KOSHIAN_ng/res.js - is_ftbucket: " + is_ftbucket);
+console.debug("KOSHIAN_ng/res.js - is_idip_thread: " + is_idip_thread);
 
 function checkThreadMail() {
-    // メール欄にID・IPスレが設定されているか確認
-    let mail = document.querySelector(".thre > font > b > a") || document.querySelector("body > form > div > font > b > a");
-    if (mail && mail.href.match(/^mailto:i[dp]%E8%A1%A8%E7%A4%BA/i)) {
-        return true;
-    }
-    let anchors = document.querySelectorAll(".thre > a");
-    for (let anchor of anchors) {
-        if (anchor.href && anchor.href.match(/^mailto:i[dp]%E8%A1%A8%E7%A4%BA/i)) {
+    if (is_ftbucket) {
+        // FTBucket
+        // may形式
+        let font = document.querySelector(".thre > font > b > font");
+        if (font && font.textContent.match(/^i[dp]表示/i)) {
             return true;
         }
-    }
-    // 「KOSHIAN メール欄を表示」対応
-    mail = document.getElementsByClassName("KOSHIAN_meran")[0];
-    if (mail && mail.textContent.match(/^\[i[dp]表示/i)) {
-        return true;
+        // img形式
+        let fonts = document.querySelectorAll(".thre > font");
+        for (let font of fonts) {
+            if (font.textContent.match(/^i[dp]表示/i)) {
+                return true;
+            }
+        }
+    } else {
+        // メール欄にID・IPスレが設定されているか確認
+        // may形式
+        let mail = document.querySelector(".thre > font > b > a");
+        if (mail && mail.href.match(/^mailto:i[dp]%E8%A1%A8%E7%A4%BA/i)) {
+            return true;
+        }
+        // img形式
+        let anchors = document.querySelectorAll(".thre > a");
+        for (let anchor of anchors) {
+            if (anchor.href && anchor.href.match(/^mailto:i[dp]%E8%A1%A8%E7%A4%BA/i)) {
+                return true;
+            }
+        }
+        // 「KOSHIAN メール欄を表示」対応
+        mail = document.getElementsByClassName("KOSHIAN_meran")[0];
+        if (mail && mail.textContent.match(/^\[i[dp]表示/i)) {
+            return true;
+        }
     }
     return false;
 }
