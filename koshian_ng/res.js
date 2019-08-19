@@ -487,7 +487,7 @@ function process(beg = 0, loaded = false, reloaded = false){
 
         // ID表示レス
         if (idip && hide_id_res && !is_idip_thread) {
-            hideBlock(block, "", "[ID表示]");
+            hideBlock(block, idip, "[ID表示]");
             continue loop;
         }
 
