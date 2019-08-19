@@ -263,11 +263,8 @@ function hideComopletely(block){
     for(let node = block.parentNode; node != null; node = node.parentNode){
         if(node.nodeName == "TABLE"){
             node.style.display = "none";
-            if(a_img){
-                a_img.style.display = "none";
-                if (a_img.className == FUTABA_LIGHTBOX_CLASS) {
-                    a_img.className = FUTABA_LIGHTBOX_HIDDEN_CLASS;
-                }
+            if(a_img && a_img.className == FUTABA_LIGHTBOX_CLASS) {
+                a_img.className = FUTABA_LIGHTBOX_HIDDEN_CLASS;
             }
             break;
         }
@@ -371,7 +368,7 @@ function process(beg = 0, loaded = false, reloaded = false){
 
     /**
      * サムネ画像NGの配列
-     * @type {Array.<RegExp>}
+     * @type {Array.<Object>}
      */
     let ng_image_list = ng_word_list.map((ng_word) => {
         // ng_word[0] string ng_input NGワード
@@ -403,21 +400,22 @@ function process(beg = 0, loaded = false, reloaded = false){
     show_deleted_res = isDeletedResShown(); // 削除レスの表示状態を確認
 
     loop: for (let i = beg; i < end; ++i) {
-        let block = responses[i].getElementsByTagName("blockquote")[0];
+        let response = responses[i];
+        let block = response.getElementsByTagName("blockquote")[0];
         let hide = false;
 
         if (words_changed) {
-            show(responses[i]);
+            show(response);
         }
         // 既存の[隠す]ボタンがあれば削除
-        let hide_button = responses[i].getElementsByClassName("KOSHIAN_HideButton")[0];
+        let hide_button = response.getElementsByClassName("KOSHIAN_HideButton")[0];
         if (hide_button){
             if (hide_button.textContent == "[見る]") {
                 hide = true;
             }
             hide_button.remove();
         } else {
-            let ng_switch = responses[i].getElementsByClassName("KOSHIAN_NGSwitch")[0];
+            let ng_switch = response.getElementsByClassName("KOSHIAN_NGSwitch")[0];
             if (ng_switch) {
                 ng_switch.remove();
             }
@@ -425,64 +423,63 @@ function process(beg = 0, loaded = false, reloaded = false){
 
         // 本文検索
         let block_text = block.textContent;
-        for (let i = 0, list_num = body_regex_list.length; i < list_num; ++i) {
-            if (body_regex_list[i].test(block_text)) {
-                hideBlock(block, body_regex_list[i].source);
+        for (let j = 0, list_num = body_regex_list.length; j < list_num; ++j) {
+            if (body_regex_list[j].test(block_text)) {
+                hideBlock(block, body_regex_list[j].source);
                 continue loop;
             }
         }
 
         // 題名・Name取得
-        let bolds = responses[i].getElementsByTagName("b");
+        let bolds = response.getElementsByTagName("b");
 
         // メール欄取得
-        let mail = responses[i].getElementsByClassName("KOSHIAN_meran")[0];
+        let mail = response.getElementsByClassName("KOSHIAN_meran")[0];
         let mail_text = null;
         if (mail) {
             mail_text = mail.textContent.slice(1,-1);
         } else {
-            mail = responses[i].getElementsByTagName("a")[0];
+            mail = response.getElementsByTagName("a")[0];
             if (mail && mail.href.indexOf("mailto:") === 0) {
                 mail_text = decodeURIComponent(mail.href.slice(7));
             }
         }
 
         // ID・IP取得
-        let idip = searchIdIp(responses[i]);
+        let idip = searchIdIp(response);
 
         // ヘッダ部検索
-        for (let i = 0, list_num = header_regex_list.length; i < list_num; ++i) {
+        for (let j = 0, list_num = header_regex_list.length; j < list_num; ++j) {
             // 題名・Name
             for (let bold of bolds) {
-                if (header_regex_list[i].test(bold.textContent)) {
-                    hideBlock(block, header_regex_list[i].source);
+                if (header_regex_list[j].test(bold.textContent)) {
+                    hideBlock(block, header_regex_list[j].source);
                     continue loop;
                 }
             }
 
             // メール欄
-            if (mail_text && header_regex_list[i].test(mail_text)) {
-                hideBlock(block, header_regex_list[i].source);
+            if (mail_text && header_regex_list[j].test(mail_text)) {
+                hideBlock(block, header_regex_list[j].source);
                 continue loop;
             }
 
             // ID･IP
-            if (idip && header_regex_list[i].test(idip)) {
-                hideBlock(block, header_regex_list[i].source);
+            if (idip && header_regex_list[j].test(idip)) {
+                hideBlock(block, header_regex_list[j].source);
                 continue loop;
             }
         }
 
         // サムネ画像検索
-        let img = responses[i].getElementsByTagName("img")[0];
+        let img = response.getElementsByTagName("img")[0];
         if (img && img.alt && img.width && img.height) {
             let size = parseInt(img.alt, 10);
-            for (let i = 0, list_num = ng_image_list.length; i < list_num; ++i) {
-                let ng_image = ng_image_list[i];
-                let text = ng_image.text ? `[${ng_image.text}] ${block_text}` : block_text;
+            for (let j = 0, list_num = ng_image_list.length; j < list_num; ++j) {
+                let ng_image = ng_image_list[j];
                 if (img.width == ng_image.width && img.height == ng_image.height && size >= ng_image.min_size && size <= ng_image.max_size) {
+                    let text = ng_image.text ? `[${ng_image.text}] ${block_text}` : block_text;
                     hideBlock(block, text, "[NG画像]");
-
                     continue loop;
                 }
             }
@@ -498,19 +495,19 @@ function process(beg = 0, loaded = false, reloaded = false){
             let res_number = "";
             if (loaded && !hide && thread_id) {
                 if (have_input) {
-                    let input = responses[i].getElementsByTagName("INPUT")[0];
+                    let input = response.getElementsByTagName("INPUT")[0];
                     if (input && input.value == "delete") {
                         res_number = input.name;
                     }
                 }
                 if (!res_number && have_sod) {
-                    let sod = responses[i].getElementsByClassName("sod")[0];
+                    let sod = response.getElementsByClassName("sod")[0];
                     if (sod && sod.id) {
                         res_number = sod.id.slice(2);
                     }
                 }
                 if (!res_number) {
-                    res_number = getResponseNumber(responses[i]);
+                    res_number = getResponseNumber(response);
                 }
                 if (res_number) {
                     hide = hide_res_list[thread_id].some(value => value == res_number);
@@ -595,11 +592,7 @@ function handleVisibilityChange() {
  */
 function isDeletedResShown() {
     let ddbut = document.getElementById("ddbut");
-    if (ddbut && ddbut.textContent == "隠す") {
-        return true;
-    } else {
-        return false;
-    }
+    return ddbut && ddbut.textContent == "隠す";
 }
 
 /**
@@ -654,10 +647,14 @@ function addNgWord(text, is_ng_image = false) {
     }
 }
 
+/**
+ * コンテキストメニューにNG登録のメニューアイテムを追加
+ */
 function onContextmenu(e) {
     context_img = null;
     context_idip = null;
     if (use_contextmenu_img) {
+        // サムネ画像情報を取得してコンテキストメニューに反映
         let img = e.target.closest("img");
         if (img && img.alt && img.width && img.height) {
             let img_a = img.parentNode;
@@ -683,20 +680,15 @@ function onContextmenu(e) {
  * ID・IPを取得してコンテキストメニューに反映
  */
 function getIdIp(e) {
-    let rtd = e.target.closest(".rtd");
-    if (rtd) {
-        context_idip = searchIdIp(rtd);
-    } else {
-        let thre = e.target.closest(".thre");
-        if (thre) {
-            context_idip = searchIdIp(thre);
+    let rtd_thre = e.target.closest(".rtd, .thre");
+    if (rtd_thre) {
+        context_idip = searchIdIp(rtd_thre);
+        if (context_idip) {
+            browser.runtime.sendMessage({
+                id: "koshian_ng_idip",
+                text: context_idip
+            });
         }
-    }
-    if (context_idip) {
-        browser.runtime.sendMessage({
-            id: "koshian_ng_idip",
-            text: context_idip
-        });
     }
 }
 
@@ -768,18 +760,21 @@ function main(){
     document.addEventListener("visibilitychange", handleVisibilityChange, false);
 
     browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-        if (message.id == "koshian_ng_popup") {
-            let sel = window.getSelection().toString();
-            sendResponse({
-                selection: sel,
-                board_id: board_id
-            });
-        } else if (message.id == "koshian_ng_context_idip") {
-            onClickNg(context_idip);
-            sendResponse();
-        } else if (message.id == "koshian_ng_context_img") {
-            onClickNg(context_img, true);
-            sendResponse();
+        switch (message.id) {
+            case "koshian_ng_popup":
+                sendResponse({
+                    selection: window.getSelection().toString(),
+                    board_id: board_id
+                });
+                break;
+            case "koshian_ng_context_idip":
+                onClickNg(context_idip);
+                sendResponse();
+                break;
+            case "koshian_ng_context_img":
+                onClickNg(context_img, true);
+                sendResponse();
+                break;
         }
     });
 
