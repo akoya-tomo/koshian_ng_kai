@@ -727,16 +727,14 @@ function main(){
     function checkAkahukuReload(target) {
         let status = "";
         let config = { childList: true };
-        let observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {  // eslint-disable-line no-unused-vars
-                if (target.textContent == status) {
-                    return;
-                }
-                status = target.textContent;
-                if (status.indexOf("新着:") === 0) {
-                    process(last_process_num, false, true);
-                }
-            });
+        let observer = new MutationObserver(() => {
+            if (target.textContent == status) {
+                return;
+            }
+            status = target.textContent;
+            if (status.indexOf("新着:") === 0) {
+                process(last_process_num, false, true);
+            }
         });
         observer.observe(target, config);
     }
@@ -750,22 +748,19 @@ function main(){
         let status = "";
         let reloading = false;
         let config = { childList: true };
-        let observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {  // eslint-disable-line no-unused-vars
-                if (target.textContent == status) {
-                    return;
-                }
-                status = target.textContent;
-                if (status == "・・・") {
-                    reloading = true;
-                } else
-                if (reloading && status.endsWith("頃消えます")) {
-                    process(last_process_num);
-                    reloading = false;
-                } else {
-                    reloading = false;
-                }
-            });
+        let observer = new MutationObserver(() => {
+            if (target.textContent == status) {
+                return;
+            }
+            status = target.textContent;
+            if (status == "・・・") {
+                reloading = true;
+            } else if (reloading && status.endsWith("頃消えます")) {
+                process(last_process_num);
+                reloading = false;
+            } else {
+                reloading = false;
+            }
         });
         observer.observe(target, config);
     }
