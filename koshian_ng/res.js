@@ -605,10 +605,17 @@ function searchIdIp(target){
  * ページの表示／非表示切り替え検出
  */
 function handleVisibilityChange() {
-    if (!document.hidden && words_changed) {
-        // NGワードが変更された状態でページが表示状態になったらNG処理実行
-        process();
-        words_changed = false;
+    if (!document.hidden) {
+        browser.runtime.sendMessage({
+            id: "koshian_ng_popup_menu",
+            checked: hide_id_res
+        });
+    
+        if (words_changed) {
+            // NGワードが変更された状態でページが表示状態になったらNG処理実行
+            process();
+            words_changed = false;
+        }
     }
 }
 
@@ -801,6 +808,13 @@ function main(){
                 onClickNg(context_img, true);
                 sendResponse();
                 break;
+            case "koshian_ng_context_popup":
+                hide_id_res = message.checked;
+                sendResponse();
+                words_changed = true;
+                process();
+                words_changed = false;
+                break;
         }
     });
 
@@ -830,6 +844,11 @@ function onLoadSetting(result) {
         hide_res_list[thread_id] = [];
     }
 
+    browser.runtime.sendMessage({
+        id: "koshian_ng_popup_menu",
+        checked: hide_id_res
+    });
+
     main();
 }
 
@@ -846,7 +865,7 @@ function onSettingChanged(changes, areaName) {
         regist_id_temp = safeGetValue(changes.regist_id_temp.newValue, true);
         regist_ip_temp = safeGetValue(changes.regist_ip_temp.newValue, true);
         use_contextmenu_img = safeGetValue(changes.use_contextmenu_img.newValue, true);
-        hide_id_res = safeGetValue(changes.hide_id_res.newValue, false);
+        //hide_id_res = safeGetValue(changes.hide_id_res.newValue, false);
         max_threads = safeGetValue(changes.max_threads.newValue, 512);
     }
     if (changes.ng_word_list) {
