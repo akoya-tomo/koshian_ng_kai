@@ -65,11 +65,33 @@ function saveSetting() {
 function addItem(text, check, board_id = "") {
   let item = document.createElement("div");
 
+  let up_allow = document.createElement("input");
+  up_allow.type = "button";
+  up_allow.value = "▲";
+  up_allow.className = "col_allow";
+  up_allow.addEventListener("click", () => {
+    let index = g_ng_word_list.findIndex(value => value[0] == text && value[6] == board_id);
+    if (index > 0) {
+      swapRow(index - 1);
+    }
+  });
+
+  let down_allow = document.createElement("input");
+  down_allow.type = "button";
+  down_allow.value = "▼";
+  down_allow.className = "col_allow";
+  down_allow.addEventListener("click", () => {
+    let index = g_ng_word_list.findIndex(value => value[0] == text && value[6] == board_id);
+    if (index > -1) {
+      swapRow(index);
+    }
+  });
+
   let btn = document.createElement("input");
   btn.type = "button";
   btn.value = "削除";
   btn.className = "col_btn";
-  btn.addEventListener("click", (e) => {  // eslint-disable-line no-unused-vars
+  btn.addEventListener("click", () => {
     let result = window.confirm(`${text}を削除してもよろしいですか？`);
     if (result) {
       item.remove();
@@ -79,7 +101,7 @@ function addItem(text, check, board_id = "") {
       saveSetting();
     }
   });
-  item.appendChild(btn);
+  item.append(btn, up_allow, down_allow);
 
   let div_check = [], check_box = [];
   for (let i = 0; i < CHECK_BOX_NUM; i++){
@@ -137,6 +159,20 @@ function addItem(text, check, board_id = "") {
   item.appendChild(div_text);
 
   g_ng_list.appendChild(item);
+
+  /**
+   * NGリスト行入替
+   *     indexの行と一つ後の行を入れ替える。
+   * @param {number} index 入替する行番号（先頭行が0）
+   */
+  function swapRow(index) {
+    if (index < 0 || index + 1 >= g_ng_word_list.length) {
+      return;
+    }
+
+    g_ng_word_list.splice(index, 2, g_ng_word_list[index + 1], g_ng_word_list[index]);
+    saveSetting();
+  }
 }
 
 /**

@@ -40,7 +40,7 @@
     </p>
     <p>
       <input type="checkbox" id="hide_id_res">
-      <label for="hide_id_res">IDが表示されたレスを隠す（IDスレは除く）</label>
+      <label for="hide_id_res">デフォルトでIDが表示されたレスを隠す（IDスレは除く）</label>
     </p>
     <hr>
     <ul style="list-style-type: none">
@@ -68,11 +68,11 @@
         NG対象<br>
         <select id="board_list"></select>
       </p>
-      <div id="ng_list_container">
-        <div class="item_btn">　</div><div class="item_check">本文</div><div class="item_check">メ欄</div><div class="item_check">大/小</div><div class="item_check">一時</div><div class="item_check">画像</div><div class="item_select">NG対象</div><div class="item_text">NGワード</div>
-        <div id="ng_list"></div>
-      </div>
     </ul>
+    <div id="ng_list_container">
+      <div class="item_btn">操作</div><div class="item_check">本文</div><div class="item_check">メ欄</div><div class="item_check">大/小</div><div class="item_check">一時</div><div class="item_check">画像</div><div class="item_select">NG対象</div><div class="item_text">NGワード</div>
+      <div id="ng_list"></div>
+    </div>
     <hr>
     <p>
       <input type="file" id="file" accept=".csv, text/csv"><input type="button" id="import" value="インポート">

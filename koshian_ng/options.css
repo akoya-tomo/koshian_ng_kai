@@ -30,12 +30,20 @@ hr {
   margin-bottom: 5px;
 }
 
+#ng_list_container {
+  font-size: 16px;
+}
+
 .item_btn {
-  display: inline-block; min-width: 49px; max-width: 49px; border-right: solid 1px;
+  display: inline-block; min-width: 124px; max-width: 124px; border-right: solid 1px; text-align: center;
+}
+
+.col_allow {
+  display: inline-block; min-width: 35px; max-width: 35px; font-size: 13px;
 }
 
 .col_btn {
-  display: inline-block; min-width: 50px; max-width: 50px;
+  display: inline-block; min-width: 50px; max-width: 50px; margin-right: 5px; font-size: 13px;
 }
 
 .item_check, .col_check {
@@ -45,6 +53,11 @@ hr {
 .item_select, .col_select {
   display: inline-block; min-width: 130px; max-width: 130px; border-right: solid 1px;
 }
+
+.col_select > select {
+  font-size: 13px;
+}
+
 .item_text, .col_text {
   display: inline-block;
 }
