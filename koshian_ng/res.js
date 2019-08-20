@@ -513,7 +513,7 @@ function process(beg = 0, loaded = false, reloaded = false){
 
         // ID表示レス
         if (idip && hide_id_res && !is_idip_thread) {
-            hideBlock(block, idip, "[ID表示]");
+            hideBlock(block, block_text, "[ID表示]");
             continue loop;
         }
 
@@ -572,7 +572,7 @@ function process(beg = 0, loaded = false, reloaded = false){
                     let ng_switch = response.getElementsByClassName("KOSHIAN_NGSwitch")[0];
                     if (!ng_switch) {
                         let block = response.getElementsByTagName("blockquote")[0];
-                        hideBlock(block, "", "[ID表示]");
+                        hide(block, block.textContent, "[ID表示]");
                     }
                 }
             }
