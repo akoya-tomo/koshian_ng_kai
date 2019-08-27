@@ -74,6 +74,10 @@ hr {
   background-color: #e3e4e6;
 }
 
+#ng_list > div:hover {
+	background-color: #e5f3ff !important;
+}
+
 #file {
   margin-right: 1em;
 }

@@ -103,11 +103,12 @@ function addItem(text, check, board_id = "") {
   });
   item.append(btn, up_allow, down_allow);
 
-  let div_check = [], check_box = [];
+  let div_check = [], check_box = [], check_box_title = ["本文", "メール欄など", "大文字/小文字を区別しない", "一時的に登録", "サムネ画像"];
   for (let i = 0; i < CHECK_BOX_NUM; i++){
     check_box[i] = document.createElement("input");
     check_box[i].type = "checkbox";
     check_box[i].checked = check[i];
+    check_box[i].title = check_box_title[i];
     check_box[i].addEventListener("change", () => {
       let index = g_ng_word_list.findIndex(value => value[0] == text && value[6] == board_id);
       if (index > -1) {
