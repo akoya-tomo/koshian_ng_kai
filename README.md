@@ -50,7 +50,7 @@
 
 ## インストール
 **GitHub**  
-[![インストールボタン](images/install_button.png "クリックでアドオンをインストール")](https://github.com/akoya-tomo/koshian_ng_kai/releases/download/v1.11.0/koshian_ng_kai-1.11.0-fx.xpi)
+[![インストールボタン](images/install_button.png "クリックでアドオンをインストール")](https://github.com/akoya-tomo/koshian_ng_kai/releases/download/v1.11.1/koshian_ng_kai-1.11.1-fx.xpi)
 
 ※v1.8.1からアドオンのアクセス許可に「」ッチー(`tsumanne.net`)・FTBucket(`ftbucket.info`)が追加になります。（アドオンを動作させるため）  
 ※v1.5.1からアドオンのアクセス許可にふたポの過去ログ\(`kako.futakuro.com`\)が追加になります。（アドオンを動作させるため） 
@@ -81,6 +81,8 @@
     第一フィールドがURLエンコードされたNGワードです。  
 
 ## 更新履歴
+* v1.11.1 2019-08-27
+  - オプション画面の表示を修正
 * v1.11.0 2019-08-20
   - ツールバーボタンのコンテキストメニューに「IDが表示されたレスを隠す」を追加
   - オプション名を「IDが表示されたレスを隠す」→「デフォルトでIDが表示されたレスを隠す」に変更
