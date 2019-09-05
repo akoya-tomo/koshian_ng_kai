@@ -519,7 +519,7 @@ function process(beg = 0, loaded = false, reloaded = false){
         }
 
         // ID表示レス
-        if (idip && hide_id_res && !is_idip_thread) {
+        if (idip && hide_id_res && !is_idip_thread && idip.match(/^ID:/)) {
             hideBlock(block, block_text, "[ID表示]");
             continue loop;
         }
@@ -569,7 +569,7 @@ function process(beg = 0, loaded = false, reloaded = false){
     function hideIdResponses() {
         for (let i = 0; i < beg; ++i) {
             let response = responses[i];
-            if (searchIdIp(response)) {
+            if (searchIdIp(response, /ID:\S{8}/)) {
                 if (hide_completely) {
                     if (response.parentNode.style.display != "none") {
                         let block = response.getElementsByTagName("blockquote")[0];
@@ -595,15 +595,16 @@ function process(beg = 0, loaded = false, reloaded = false){
 /**
  * ID・IP検索
  * @param {HTMLElement} target ID・IPを検索するレスのHTML要素(.rtd or .thre)
+ * @param {RegExp} regex 検索するID・IPの正規表現リテラル
  * @return {string} ID・IP文字列
  */
-function searchIdIp(target){
+function searchIdIp(target, regex = /ID:\S{8}|IP:[^\s[]+/){
     let idip = null;
     for (let node = target.firstElementChild.nextSibling; node; node = node.nextSibling) {
         if (node.tagName == "A") {
-            idip = node.textContent.match(/ID:\S{8}|IP:[^\s[]+/);
+            idip = node.textContent.match(regex);
         } else if (node.nodeValue) {
-            idip = node.nodeValue.match(/ID:\S{8}|IP:[^\s[]+/);
+            idip = node.nodeValue.match(regex);
         }
         if (idip) {
             return idip[0];
