@@ -50,7 +50,7 @@
 
 ## インストール
 **GitHub**  
-[![インストールボタン](images/install_button.png "クリックでアドオンをインストール")](https://github.com/akoya-tomo/koshian_ng_kai/releases/download/v1.11.1/koshian_ng_kai-1.11.1-fx.xpi)
+[![インストールボタン](images/install_button.png "クリックでアドオンをインストール")](https://github.com/akoya-tomo/koshian_ng_kai/releases/download/v1.11.2/koshian_ng_kai-1.11.2-fx.xpi)
 
 ※v1.8.1からアドオンのアクセス許可に「」ッチー(`tsumanne.net`)・FTBucket(`ftbucket.info`)が追加になります。（アドオンを動作させるため）  
 ※v1.5.1からアドオンのアクセス許可にふたポの過去ログ\(`kako.futakuro.com`\)が追加になります。（アドオンを動作させるため） 
@@ -81,6 +81,8 @@
     第一フィールドがURLエンコードされたNGワードです。  
 
 ## 更新履歴
+* v1.11.2 2019-09-05
+  - ID・IP表示板でレスが隠れる不具合を修正
 * v1.11.1 2019-08-27
   - オプション画面の表示を修正
 * v1.11.0 2019-08-20
