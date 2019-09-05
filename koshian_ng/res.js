@@ -23,13 +23,20 @@ let board_id = "";
 let thread_id = "";
 let is_futaba = document.domain.endsWith(".2chan.net");
 let is_ftbucket = document.domain.endsWith(".ftbucket.info");
-let is_idip_thread = checkThreadMail();
+let is_idip_thread = checkIdIpThread();
 
 console.debug("KOSHIAN_ng/res.js - is_futaba: " + is_futaba);
 console.debug("KOSHIAN_ng/res.js - is_ftbucket: " + is_ftbucket);
 console.debug("KOSHIAN_ng/res.js - is_idip_thread: " + is_idip_thread);
 
-function checkThreadMail() {
+function checkIdIpThread() {
+    // ID・IP表示板か確認
+    let ftb2 = document.getElementsByClassName("ftb2")[0];
+    if (ftb2 && ftb2.textContent.match(/(IPアドレスが表示されます|IDが表示されます)/)) {
+        return true;
+    }
+
+    // メール欄にID・IPスレが設定されているか確認
     if (is_ftbucket) {
         // FTBucket
         // may形式
@@ -45,7 +52,7 @@ function checkThreadMail() {
             }
         }
     } else {
-        // メール欄にID・IPスレが設定されているか確認
+        // FTBucket以外
         // may形式
         let mail = document.querySelector(".thre > font > b > a");
         if (mail && mail.href.match(/^mailto:i[dp]%E8%A1%A8%E7%A4%BA/i)) {
