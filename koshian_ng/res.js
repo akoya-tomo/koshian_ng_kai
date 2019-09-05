@@ -23,13 +23,20 @@ let board_id = "";
 let thread_id = "";
 let is_futaba = document.domain.endsWith(".2chan.net");
 let is_ftbucket = document.domain.endsWith(".ftbucket.info");
-let is_idip_thread = checkThreadMail();
+let is_idip_thread = checkIdIpThread();
 
 console.debug("KOSHIAN_ng/res.js - is_futaba: " + is_futaba);
 console.debug("KOSHIAN_ng/res.js - is_ftbucket: " + is_ftbucket);
 console.debug("KOSHIAN_ng/res.js - is_idip_thread: " + is_idip_thread);
 
-function checkThreadMail() {
+function checkIdIpThread() {
+    // ID・IP表示板か確認
+    let ftb2 = document.getElementsByClassName("ftb2")[0];
+    if (ftb2 && ftb2.textContent.match(/(IPアドレスが表示されます|IDが表示されます)/)) {
+        return true;
+    }
+
+    // メール欄にID・IPスレが設定されているか確認
     if (is_ftbucket) {
         // FTBucket
         // may形式
@@ -45,7 +52,7 @@ function checkThreadMail() {
             }
         }
     } else {
-        // メール欄にID・IPスレが設定されているか確認
+        // FTBucket以外
         // may形式
         let mail = document.querySelector(".thre > font > b > a");
         if (mail && mail.href.match(/^mailto:i[dp]%E8%A1%A8%E7%A4%BA/i)) {
@@ -512,7 +519,7 @@ function process(beg = 0, loaded = false, reloaded = false){
         }
 
         // ID表示レス
-        if (idip && hide_id_res && !is_idip_thread) {
+        if (idip && hide_id_res && !is_idip_thread && idip.match(/^ID:/)) {
             hideBlock(block, block_text, "[ID表示]");
             continue loop;
         }
@@ -562,7 +569,7 @@ function process(beg = 0, loaded = false, reloaded = false){
     function hideIdResponses() {
         for (let i = 0; i < beg; ++i) {
             let response = responses[i];
-            if (searchIdIp(response)) {
+            if (searchIdIp(response, /ID:\S{8}/)) {
                 if (hide_completely) {
                     if (response.parentNode.style.display != "none") {
                         let block = response.getElementsByTagName("blockquote")[0];
@@ -588,15 +595,16 @@ function process(beg = 0, loaded = false, reloaded = false){
 /**
  * ID・IP検索
  * @param {HTMLElement} target ID・IPを検索するレスのHTML要素(.rtd or .thre)
+ * @param {RegExp} regex 検索するID・IPの正規表現リテラル
  * @return {string} ID・IP文字列
  */
-function searchIdIp(target){
+function searchIdIp(target, regex = /ID:\S{8}|IP:[^\s[]+/){
     let idip = null;
     for (let node = target.firstElementChild.nextSibling; node; node = node.nextSibling) {
         if (node.tagName == "A") {
-            idip = node.textContent.match(/ID:\S{8}|IP:[^\s[]+/);
+            idip = node.textContent.match(regex);
         } else if (node.nodeValue) {
-            idip = node.nodeValue.match(/ID:\S{8}|IP:[^\s[]+/);
+            idip = node.nodeValue.match(regex);
         }
         if (idip) {
             return idip[0];
