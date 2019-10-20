@@ -578,9 +578,10 @@ function process(beg = 0, loaded = false, reloaded = false){
                 } else {
                     let ng_switch = response.getElementsByClassName("KOSHIAN_NGSwitch")[0];
                     if (!ng_switch) {
-                        // 既存の[隠す]ボタンがあれば削除
                         let hide_button = response.getElementsByClassName("KOSHIAN_HideButton")[0];
-                        if (hide_button){
+                        if (hide_button) {
+                            // 既存の[隠す]ボタンがあれば削除
+                            show(response);
                             hide_button.remove();
                         }
                         let block = response.getElementsByTagName("blockquote")[0];
