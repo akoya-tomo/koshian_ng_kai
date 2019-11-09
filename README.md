@@ -50,7 +50,7 @@
 
 ## インストール
 **GitHub**  
-[![インストールボタン](images/install_button.png "クリックでアドオンをインストール")](https://github.com/akoya-tomo/koshian_ng_kai/releases/download/v1.11.3/koshian_ng_kai-1.11.3-fx.xpi)
+[![インストールボタン](images/install_button.png "クリックでアドオンをインストール")](https://github.com/akoya-tomo/koshian_ng_kai/releases/download/v1.11.4/koshian_ng_kai-1.11.4-fx.xpi)
 
 ※v1.8.1からアドオンのアクセス許可に「」ッチー(`tsumanne.net`)・FTBucket(`ftbucket.info`)が追加になります。（アドオンを動作させるため）  
 ※v1.5.1からアドオンのアクセス許可にふたポの過去ログ\(`kako.futakuro.com`\)が追加になります。（アドオンを動作させるため） 
@@ -81,6 +81,9 @@
     第一フィールドがURLエンコードされたNGワードです。  
 
 ## 更新履歴
+* v1.11.4 2019-11-09
+  - 板名変更（地震→自然災害）
+  - 新板（ボカロ）を追加
 * v1.11.3 2019-10-20
   - 手動で隠したレスにIDが出るとレスが表示されてしまう不具合を修正
 * v1.11.2 2019-09-05
