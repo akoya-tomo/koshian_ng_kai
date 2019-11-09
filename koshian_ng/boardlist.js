@@ -223,6 +223,9 @@ let board_list = {  // eslint-disable-line no-unused-vars
     "dec_73" : {
         name: "VTuber",
     },
+    "dec_81" : {
+        name: "ボカロ",
+    },
     "dat_x" : {
         name: "3DCG",
     },
@@ -290,7 +293,7 @@ let board_list = {  // eslint-disable-line no-unused-vars
         name: "発電",
     },
     "dec_52" : {
-        name: "地震",
+        name: "自然災害",
     },
     "img_9" : {
         name: "雑談",
