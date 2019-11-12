@@ -224,7 +224,7 @@ let board_list = {  // eslint-disable-line no-unused-vars
         name: "VTuber",
     },
     "dec_81" : {
-        name: "ボカロ",
+        name: "合成音声",
     },
     "dat_x" : {
         name: "3DCG",
