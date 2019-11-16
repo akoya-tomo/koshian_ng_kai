@@ -157,6 +157,9 @@ let board_list = {  // eslint-disable-line no-unused-vars
     "dec_71" : {
         name: "そうだね",
     },
+    "dec_82" : {
+        name: "任天堂",
+    },
     "dec_61" : {
         name: "ソニー",
     },
