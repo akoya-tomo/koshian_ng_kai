@@ -15,6 +15,8 @@ let hide_res_list = {};
 let have_input = false;
 let have_sod = false;
 let have_del = false;
+let have_csb = false;
+let have_cnw = false;
 let words_changed = false;
 let show_deleted_res = false;
 let context_idip = null;
@@ -464,7 +466,9 @@ function process(beg = 0, loaded = false, reloaded = false){
         }
 
         // 題名・Name取得
-        let bolds = response.getElementsByTagName("b");
+        let bolds = have_csb ? [] : response.getElementsByTagName("b");
+        let csbs = have_csb ?  response.getElementsByClassName("csb") : [];
+        let cnms = have_csb ?  response.getElementsByClassName("cnm") : [];
 
         // メール欄取得
         let mail = response.getElementsByClassName("KOSHIAN_meran")[0];
@@ -486,6 +490,18 @@ function process(beg = 0, loaded = false, reloaded = false){
             // 題名・Name
             for (let bold of bolds) {
                 if (header_regex_list[j].test(bold.textContent)) {
+                    hideBlock(block, header_regex_list[j].source);
+                    continue loop;
+                }
+            }
+            for (let csb of csbs) {
+                if (header_regex_list[j].test(csb.textContent)) {
+                    hideBlock(block, header_regex_list[j].source);
+                    continue loop;
+                }
+            }
+            for (let cnm of cnms) {
+                if (header_regex_list[j].test(cnm.textContent)) {
                     hideBlock(block, header_regex_list[j].source);
                     continue loop;
                 }
@@ -602,10 +618,10 @@ function process(beg = 0, loaded = false, reloaded = false){
 function searchIdIp(target, regex = /ID:\S{8}|IP:[^\s[]+/){
     let idip = null;
     for (let node = target.firstElementChild.nextSibling; node; node = node.nextSibling) {
-        if (node.tagName == "A") {
-            idip = node.textContent.match(regex);
-        } else if (node.nodeValue) {
+        if (node.nodeValue) {
             idip = node.nodeValue.match(regex);
+        } else if (node.tagName == "A" || (have_cnw && node.classList.contains("cnw"))) {
+            idip = node.textContent.match(regex);
         }
         if (idip) {
             return idip[0];
@@ -743,6 +759,8 @@ function main(){
     have_input = document.querySelector(".thre > input") ? document.querySelector(".thre > input").value == "delete" : false;
     have_sod = document.getElementsByClassName("sod").length > 0;
     have_del = document.getElementsByClassName("del").length > 0;
+    have_csb = document.getElementsByClassName("csb").length > 0;
+    have_cnw = document.getElementsByClassName("cnw").length > 0;
 
     process(0, true);
 
