@@ -42,7 +42,7 @@ function checkIdIpThread() {
     if (is_ftbucket) {
         // FTBucket
         // may形式
-        let font = document.querySelector(".thre > font > b > font");
+        let font = document.querySelector(".cnm > font") || document.querySelector(".thre > font > b > font");
         if (font && font.textContent.match(/^i[dp]表示/i)) {
             return true;
         }
@@ -56,7 +56,7 @@ function checkIdIpThread() {
     } else {
         // FTBucket以外
         // may形式
-        let mail = document.querySelector(".thre > font > b > a");
+        let mail = document.querySelector(".cnm > a") || document.querySelector(".thre > font > b > a");
         if (mail && mail.href.match(/^mailto:i[dp]%E8%A1%A8%E7%A4%BA/i)) {
             return true;
         }
