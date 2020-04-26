@@ -298,6 +298,9 @@ let board_list = {  // eslint-disable-line no-unused-vars
     "dec_52" : {
         name: "自然災害",
     },
+    "dec_83" : {
+        name: "コロナ",
+    },
     "img_9" : {
         name: "雑談",
     },
