@@ -83,7 +83,8 @@ function checkIdIpThread() {
  */
 function setThreadId() {
     let match, server, path, number;
-    switch (document.domain) {
+    let domain = is_ftbucket ? "ftbucket.info" : document.domain;
+    switch (domain) {
         case "kako.futakuro.com":
             // ふたポ過去ログ
             match = location.href.match(/^https?:\/\/kako.futakuro.com\/futa\/([^/]+)\/(\d+)\//);
@@ -113,8 +114,7 @@ function setThreadId() {
                 }
             }
             break;
-        case "www.ftbucket.info":
-        case "dev.ftbucket.info":
+        case "ftbucket.info":
             // ftbucket
             match = location.href.match(/^https?:\/\/[^.]+.ftbucket.info\/.+\/cont\/([^./]+)\.2chan.net_([^_/]+)_res_(\d+)\/index.htm/);
             if (match) {
