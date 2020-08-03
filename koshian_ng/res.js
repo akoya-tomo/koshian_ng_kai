@@ -82,14 +82,15 @@ function checkIdIpThread() {
  *     {string} thread_id スレッドID文字列（サーバー名_パス名_スレッドNo.）
  */
 function setThreadId() {
-    let match, server, path;
-    switch (document.domain) {
+    let match, server, path, number;
+    let domain = is_ftbucket ? "ftbucket.info" : document.domain;
+    switch (domain) {
         case "kako.futakuro.com":
             // ふたポ過去ログ
             match = location.href.match(/^https?:\/\/kako.futakuro.com\/futa\/([^/]+)\/(\d+)\//);
             if (match) {
                 board_id = match[1];
-                thread_id = board_id + "_" + match[2];
+                number = match[2];
             }
             break;
         case "tsumanne.net":
@@ -109,31 +110,42 @@ function setThreadId() {
                 }
                 if (board_id) {
                     let thre = document.getElementsByClassName("thre")[0];
-                    let number = getResponseNumber(thre);
-                    if (number) {
-                        thread_id = board_id + "_" + number;
-                    }
+                    number = getResponseNumber(thre);
                 }
             }
             break;
-        case "www.ftbucket.info":
-        case "dev.ftbucket.info":
+        case "ftbucket.info":
             // ftbucket
             match = location.href.match(/^https?:\/\/[^.]+.ftbucket.info\/.+\/cont\/([^./]+)\.2chan.net_([^_/]+)_res_(\d+)\/index.htm/);
             if (match) {
                 board_id = match[1] + "_" + match[2];
-                thread_id = board_id + "_" + match[3];
+                number = match[3];
             }
             break;
         default:
-            // ふたば
-            server = document.domain.match(/^[^.]+/);
-            path = location.pathname.match(/[^/]+/);
-            board_id = server + "_" + path;
-            match = location.pathname.match(/\/(\d+)\.htm/);
-            if (match) {
-                thread_id = board_id + "_" + match[1];
+            if (is_futaba) {
+                // ふたば
+                server = document.domain.match(/^[^.]+/);
+                path = location.pathname.match(/[^/]+/);
+                board_id = server + "_" + path;
+                match = location.pathname.match(/\/(\d+)\.htm/);
+                if (match) {
+                    number = match[1];
+                }
             }
+    }
+    // 古い板IDを変換
+    switch (board_id) {
+        case "jun_b":
+            board_id = "jun_jun";
+            break;
+        case "dec_b":
+            board_id = "dec_dec";
+            break;
+    }
+
+    if (board_id && number) {
+        thread_id = board_id + "_" + number;
     }
     console.debug("KOSHIAN_ng/res.js - thread_id: " + thread_id);
 }
