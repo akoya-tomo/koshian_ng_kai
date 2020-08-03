@@ -2,9 +2,9 @@
   "addons": {
     "{709CBCCE-3EDF-11E8-817A-C6D28A3A6C14}": {
       "updates": [
-        { "version": "1.12.3",
-           "update_link": "https://github.com/akoya-tomo/koshian_ng_kai/releases/download/v1.12.3/koshian_ng_kai-1.12.3-fx.xpi",
-           "update_info_url": "https://github.com/akoya-tomo/koshian_ng_kai/releases/download/v1.12.3/update_info.html"
+        { "version": "1.13.0",
+           "update_link": "https://github.com/akoya-tomo/koshian_ng_kai/releases/download/v1.13.0/koshian_ng_kai-1.13.0-fx.xpi",
+           "update_info_url": "https://github.com/akoya-tomo/koshian_ng_kai/releases/download/v1.13.0/update_info.html"
           }
       ]
     }
