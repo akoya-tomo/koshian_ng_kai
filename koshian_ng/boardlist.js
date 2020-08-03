@@ -73,7 +73,7 @@ let board_list = {  // eslint-disable-line no-unused-vars
     "dat_img2" : {
         name: "二次元",
     },
-    "dec_b" : {
+    "dec_dec" : {
         name: "dec",
     },
     "jun_jun" : {
