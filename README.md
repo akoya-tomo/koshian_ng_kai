@@ -51,10 +51,9 @@
 
 ## インストール
 **GitHub**  
-[![インストールボタン](images/install_button.png "クリックでアドオンをインストール")](https://github.com/akoya-tomo/koshian_ng_kai/releases/download/v1.13.0/koshian_ng_kai-1.13.0-fx.xpi)
+[![インストールボタン](images/install_button.png "クリックでアドオンをインストール")](https://github.com/akoya-tomo/koshian_ng_kai/releases/download/v1.13.1/koshian_ng_kai-1.13.1-fx.xpi)
 
-※v1.8.1からアドオンのアクセス許可に「」ッチー(`tsumanne.net`)・FTBucket(`ftbucket.info`)が追加になります。（アドオンを動作させるため）  
-※v1.5.1からアドオンのアクセス許可にふたポの過去ログ\(`kako.futakuro.com`\)が追加になります。（アドオンを動作させるため） 
+※アドオンのアクセス許可にログサイトが追加されます。（アドオンを動作させるため）  
 
 ※「接続エラーのため、アドオンをダウンロードできませんでした。」と表示されてインストール出来ないときはインストールボタンを右クリックしてxpiファイルをダウンロードし、メニューのツール→アドオン（またはCtrl+Shift+A）で表示されたアドオンマネージャーのページにxpiファイルをドラッグ＆ドロップして下さい。  
 
@@ -89,6 +88,8 @@
     第一フィールドがURLエンコードされたNGワードです。  
 
 ## 更新履歴
+* v1.13.1 2020-10-04
+  - 板名変更（安倍晋三→菅義偉）
 * v1.13.0 2020-08-03
   - 二次元裏decの板IDを更新（dec_b→dec_dec）
   - 古い板IDを新しい板IDに更新するように修正
