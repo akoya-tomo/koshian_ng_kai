@@ -245,7 +245,7 @@ let board_list = {  // eslint-disable-line no-unused-vars
         name: "文在寅",
     },
     "dec_80" : {
-        name: "安倍晋三",
+        name: "菅義偉",
     },
     "dec_50" : {
         name: "三次実況",
