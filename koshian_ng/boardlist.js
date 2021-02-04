@@ -226,6 +226,9 @@ let board_list = {  // eslint-disable-line no-unused-vars
     "dec_73" : {
         name: "VTuber",
     },
+    "dec_84" : {
+        name: "ホロライブ",
+    },
     "dec_81" : {
         name: "合成音声",
     },
