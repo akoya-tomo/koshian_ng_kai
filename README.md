@@ -51,7 +51,7 @@
 
 ## インストール
 **GitHub**  
-[![インストールボタン](images/install_button.png "クリックでアドオンをインストール")](https://github.com/akoya-tomo/koshian_ng_kai/releases/download/v1.13.1/koshian_ng_kai-1.13.1-fx.xpi)
+[![インストールボタン](images/install_button.png "クリックでアドオンをインストール")](https://github.com/akoya-tomo/koshian_ng_kai/releases/download/v1.13.2/koshian_ng_kai-1.13.2-fx.xpi)
 
 ※アドオンのアクセス許可にログサイトが追加されます。（アドオンを動作させるため）  
 
@@ -88,6 +88,8 @@
     第一フィールドがURLエンコードされたNGワードです。  
 
 ## 更新履歴
+* v1.13.2 2021-02-04
+  - 新板（ホロライブ）を追加
 * v1.13.1 2020-10-04
   - 板名変更（安倍晋三→菅義偉）
 * v1.13.0 2020-08-03
